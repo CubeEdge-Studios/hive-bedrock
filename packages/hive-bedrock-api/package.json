@@ -6,7 +6,7 @@
     "types": "lib/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/CubeEdge-Studios/hive-bedrock-api.git"
+        "url": "git+https://github.com/CubeEdge-Studios/hive-bedrock.git"
     },
     "license": "MIT",
     "author": "Cubeedge Studios",
