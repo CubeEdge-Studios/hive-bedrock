@@ -4,6 +4,7 @@ import processPlayerInfo, { ProcessedPlayerResponse } from "./processors/player"
 import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics";
 import { ProcessedMapResponse } from "./processors/map";
 import { ProcessedGameMetadata } from "./processors/meta";
+import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
 
 type TODO = any;
 
@@ -31,7 +32,7 @@ export default class HiveAPI {
             if (!request.ok) return { data: null, error: { status: request.status } };
 
             const meta: MethodResponse<any>["meta"] = {
-                duration: performance.now() - start,
+                duration: Math.ceil(performance.now() - start),
                 ratelimit: {
                     limit: Number(request.headers.get("X-Ratelimit-Limit")),
                     remaining: Number(request.headers.get("X-Ratelimit-Remaining")),
@@ -58,7 +59,15 @@ export default class HiveAPI {
         return { data, error: null, meta };
     }
     // /player/search/{prefix}
-    public async getPlayerSearch(prefix: string): Promise<TODO> {}
+    public async getPlayerSearch(prefix: string): Promise<MethodResponse<ProcessedPlayerSearchResponse>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/player/search/${prefix}`);
+        if (error) return { data: null, error, meta };
+
+        const data = processPlayerSearch(response);
+        if (!data) return { data: null, error: { status: 500, message: "Failed to process player search data" }, meta };
+
+        return { data, error: null, meta };
+    }
 
     // /game/{timeframe}/[all/{game}]/{player}
     public async getStatistics(identifier: string, timeframe: Timeframe, options: { game?: Game; month?: number; year?: number }): Promise<TODO> {}
