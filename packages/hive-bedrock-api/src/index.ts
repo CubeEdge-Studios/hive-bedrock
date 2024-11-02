@@ -1,6 +1,9 @@
 import { API_BASE_ENDPOINT, Game, Timeframe } from "hive-bedrock-data";
 import { MethodResponse } from "./utils";
 import processPlayerInfo, { ProcessedPlayerResponse } from "./processors/player";
+import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics";
+import { ProcessedMapResponse } from "./processors/map";
+import { ProcessedGameMetadata } from "./processors/meta";
 
 type TODO = any;
 
@@ -68,9 +71,21 @@ export default class HiveAPI {
     public async getSeasonalLeaderboard(identifier: string, game: Game, season?: number): Promise<TODO> {}
 
     // /global/statistics
-    public async getGlobalStatistics(): Promise<TODO> {}
+    public async getGlobalStatistics(): Promise<MethodResponse<ProcessedGlobalStatisticsResponse>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>("/global/statistics");
+        if (error) return { data: null, error, meta };
+        return { data: response, error: null, meta };
+    }
     // /game/map/{game}
-    public async getGameMaps(game: Game): Promise<TODO> {}
+    public async getGameMaps(game: Game): Promise<MethodResponse<ProcessedMapResponse>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/map/${game}`);
+        if (error) return { data: null, error, meta };
+        return { data: response, error: null, meta };
+    }
     // /game/meta/{game}
-    public async getGameMetadata(game: Game): Promise<TODO> {}
+    public async getGameMetadata(game: Game): Promise<MethodResponse<ProcessedGameMetadata>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/meta/${game}`);
+        if (error) return { data: null, error, meta };
+        return { data: response, error: null, meta };
+    }
 }
