@@ -5,6 +5,7 @@ import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistic
 import { ProcessedMapResponse } from "./processors/map";
 import { ProcessedGameMetadata } from "./processors/meta";
 import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
+import processGame from "./processors/game";
 
 type TODO = any;
 
@@ -48,7 +49,11 @@ export default class HiveAPI {
         }
     }
 
-    // /game/all/main/{player}
+    /**
+     * `/game/all/main/{identifier}` Gets information about a player
+     * @param identifier Username or UUID of the player
+     * @returns The player information
+     */
     public async getPlayer(identifier: string): Promise<MethodResponse<ProcessedPlayerResponse>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/all/main/${identifier}`);
         if (error) return { data: null, error, meta };
@@ -58,7 +63,11 @@ export default class HiveAPI {
 
         return { data, error: null, meta };
     }
-    // /player/search/{prefix}
+    /**
+     * `/player/search/{prefix}` Gets a list of players that match the prefix
+     * @param prefix The prefix to search for (must be at least 4 characters long)
+     * @returns A list of players that match the prefix
+     */
     public async getPlayerSearch(prefix: string): Promise<MethodResponse<ProcessedPlayerSearchResponse>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/player/search/${prefix}`);
         if (error) return { data: null, error, meta };
@@ -69,8 +78,41 @@ export default class HiveAPI {
         return { data, error: null, meta };
     }
 
-    // /game/{timeframe}/[all/{game}]/{player}
-    public async getStatistics(identifier: string, timeframe: Timeframe, options: { game?: Game; month?: number; year?: number }): Promise<TODO> {}
+    /**
+     * Gets statistics for a player
+     * @param identifier Username or UUID of the player
+     * @param timeframe The timeframe to get the statistics for
+     * @param options Additional options including specific game, month, and year
+     * @returns The player statistics
+     */
+    public async getStatistics(identifier: string, timeframe: Timeframe, options?: { game?: Game; month?: number; year?: number }) {
+        if (timeframe === Timeframe.AllTime) return this._getStatisticsAllTime(identifier, options?.game);
+        return this._getStatisticsMonthly(identifier, options?.game, options?.month, options?.year);
+    }
+    // /game/all/{game}/{player}
+    private async _getStatisticsAllTime(identifier: string, game?: Game): Promise<TODO> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/all/${game ?? "all"}/${identifier}`);
+        if (error) return { data: null, error, meta };
+
+        if (game) return { data: processGame(game, Timeframe.AllTime, false, response), error: null, meta };
+
+        let data = Object.fromEntries(
+            Object.entries(response)
+                .map(([id, res]) => [id, id === "main" ? null : processGame(id as Game, Timeframe.AllTime, false, res)])
+                .filter(([, res]) => res)
+        );
+        return {
+            data: {
+                player: processPlayerInfo(response),
+                games: data,
+            },
+            error: null,
+            meta,
+        };
+    }
+    // /game/monthly/{game}/{player}/{month}/{year}
+    private async _getStatisticsMonthly(identifier: string, game?: Game, month?: number, year?: number): Promise<TODO> {}
+
     // /game/season/player/{game}/{player}/{season};
     public async getSeasonalStatistics(identifier: string, game: Game, season?: number): Promise<TODO> {}
 
@@ -79,19 +121,30 @@ export default class HiveAPI {
     // /game/season/{game}/{season}
     public async getSeasonalLeaderboard(identifier: string, game: Game, season?: number): Promise<TODO> {}
 
-    // /global/statistics
+    /**
+     * `/global/statistics` Gets global statistics
+     * @returns The global statistics
+     */
     public async getGlobalStatistics(): Promise<MethodResponse<ProcessedGlobalStatisticsResponse>> {
         const { data: response, error, meta } = await this._fetchAPI<any>("/global/statistics");
         if (error) return { data: null, error, meta };
         return { data: response, error: null, meta };
     }
-    // /game/map/{game}
+    /**
+     * `/game/map/{game}` Gets information about the maps in a game
+     * @param game The game to get the maps for (fails for games without maps)
+     * @returns A list of maps in the game
+     */
     public async getGameMaps(game: Game): Promise<MethodResponse<ProcessedMapResponse>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/map/${game}`);
         if (error) return { data: null, error, meta };
         return { data: response, error: null, meta };
     }
-    // /game/meta/{game}
+    /**
+     * `/game/meta/{game}` Gets metadata about a game
+     * @param game The game to get the metadata for
+     * @returns The metadata for the game
+     */
     public async getGameMetadata(game: Game): Promise<MethodResponse<ProcessedGameMetadata>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/meta/${game}`);
         if (error) return { data: null, error, meta };

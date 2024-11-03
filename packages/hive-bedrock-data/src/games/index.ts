@@ -29,6 +29,8 @@ export const Games = {
     [Game.JustBuild]: build,
     [Game.MurderMystery]: murder,
     [Game.Skywars]: sky,
+    [Game.SkywarsClassic]: sky,
+    [Game.SkywarsKits]: sky,
     [Game.SurvivalGames]: sg,
     [Game.TheBridge]: bridge,
     [Game.TreasureWars]: wars,
