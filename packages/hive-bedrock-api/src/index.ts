@@ -5,7 +5,7 @@ import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistic
 import { ProcessedMapResponse } from "./processors/map";
 import { ProcessedGameMetadata } from "./processors/meta";
 import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
-import processGame from "./processors/game";
+import processGame, { ProcessedAllGamesResponse, ProcessedGame, ProcessedGameBED, ProcessedMonthlyGamesResponse } from "./processors/game";
 
 type TODO = any;
 
@@ -85,33 +85,98 @@ export default class HiveAPI {
      * @param options Additional options including specific game, month, and year
      * @returns The player statistics
      */
+    public async getStatistics(identifier: string, timeframe: Timeframe.AllTime): Promise<MethodResponse<ProcessedAllGamesResponse>>;
+    public async getStatistics<G extends Game>(
+        identifier: string,
+        timeframe: Timeframe.AllTime,
+        options: { game: G }
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.AllTime, false>[G]>>;
+    public async getStatistics(
+        identifier: string,
+        timeframe: Timeframe.Monthly,
+        options?: { month?: number; year?: number }
+    ): Promise<MethodResponse<ProcessedAllGamesResponse>>;
+    public async getStatistics<G extends Game>(
+        identifier: string,
+        timeframe: Timeframe.Monthly,
+        options: { game: G; month?: number; year?: number }
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.AllTime, false>[G]>>;
     public async getStatistics(identifier: string, timeframe: Timeframe, options?: { game?: Game; month?: number; year?: number }) {
-        if (timeframe === Timeframe.AllTime) return this._getStatisticsAllTime(identifier, options?.game);
-        return this._getStatisticsMonthly(identifier, options?.game, options?.month, options?.year);
+        if (timeframe === Timeframe.AllTime) {
+            if (options?.game) return this._getStatisticsAllTime(identifier, options.game);
+            return this._getStatisticsAllTime(identifier);
+        }
+
+        if (options?.game) return this._getStatisticsMonthly(identifier, options.game, options.month, options.year);
+        return this._getStatisticsMonthly(identifier, undefined, options?.month, options?.year);
     }
     // /game/all/{game}/{player}
-    private async _getStatisticsAllTime(identifier: string, game?: Game): Promise<TODO> {
+    private async _getStatisticsAllTime(identifier: string): Promise<MethodResponse<ProcessedAllGamesResponse>>;
+    private async _getStatisticsAllTime<G extends Game>(identifier: string, game: G): Promise<MethodResponse<ProcessedGame<Timeframe.AllTime, false>[G]>>;
+    private async _getStatisticsAllTime<G extends Game>(
+        identifier: string,
+        game?: G
+    ): Promise<MethodResponse<ProcessedAllGamesResponse | (ProcessedGame<Timeframe.AllTime, false>[G] | null)>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/all/${game ?? "all"}/${identifier}`);
         if (error) return { data: null, error, meta };
 
         if (game) return { data: processGame(game, Timeframe.AllTime, false, response), error: null, meta };
 
         let data = Object.fromEntries(
-            Object.entries(response)
-                .map(([id, res]) => [id, id === "main" ? null : processGame(id as Game, Timeframe.AllTime, false, res)])
-                .filter(([, res]) => res)
+            Object.entries(response).map(([id, res]) => [id, id === "main" ? null : processGame(id as Game, Timeframe.AllTime, false, res) ?? null])
         );
+        delete data.main;
         return {
             data: {
                 player: processPlayerInfo(response),
-                games: data,
-            },
+                statistics: data,
+            } as ProcessedAllGamesResponse,
             error: null,
             meta,
         };
     }
     // /game/monthly/{game}/{player}/{month}/{year}
-    private async _getStatisticsMonthly(identifier: string, game?: Game, month?: number, year?: number): Promise<TODO> {}
+    private async _getStatisticsMonthly(
+        identifier: string,
+        game: undefined,
+        month?: number,
+        year?: number
+    ): Promise<MethodResponse<ProcessedMonthlyGamesResponse>>;
+    private async _getStatisticsMonthly<G extends Game>(
+        identifier: string,
+        game: G,
+        month?: number,
+        year?: number
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, false>[G]>>;
+    private async _getStatisticsMonthly<G extends Game>(
+        identifier: string,
+        game?: G,
+        month?: number,
+        year?: number
+    ): Promise<MethodResponse<ProcessedMonthlyGamesResponse | (ProcessedGame<Timeframe.Monthly, false>[G] | null)>> {
+        const {
+            data: response,
+            error,
+            meta,
+        } = await this._fetchAPI<any>(
+            `/game/monthly/player/${game ?? "all"}/${identifier}/${year ?? new Date().getFullYear()}/${month ?? new Date().getMonth() + 1}`
+        );
+        if (error) return { data: null, error, meta };
+
+        if (game) return { data: processGame(game, Timeframe.Monthly, false, response), error: null, meta };
+
+        let data = Object.fromEntries(
+            Object.entries(response).map(([id, res]) => [id, id === "main" ? null : processGame(id as Game, Timeframe.Monthly, false, res) ?? null])
+        );
+        delete data.main;
+        return {
+            data: {
+                statistics: data,
+            } as ProcessedMonthlyGamesResponse,
+            error: null,
+            meta,
+        };
+    }
 
     // /game/season/player/{game}/{player}/{season};
     public async getSeasonalStatistics(identifier: string, game: Game, season?: number): Promise<TODO> {}

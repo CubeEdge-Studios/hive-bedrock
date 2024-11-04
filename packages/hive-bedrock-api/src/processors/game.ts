@@ -1,4 +1,5 @@
 import { calculateLevelFromXP, Game, Timeframe } from "hive-bedrock-data";
+import { ProcessedPlayerResponse } from "./player";
 
 export interface ProcessedGameBED {
     id: Game.BedWars;
@@ -272,8 +273,8 @@ export interface ProcessedGamePARKOUR {
     }[];
     total_stars: number;
 }
-export type AdditionalStatistics<T extends Timeframe, L extends boolean> = (T extends Timeframe.AllTime ? { level: number; first_played: number } : never) &
-    (L extends true ? { position: number } : never);
+export type AdditionalStatistics<T extends Timeframe, L extends boolean> = (T extends Timeframe.AllTime ? { level: number; first_played: number } : {}) &
+    (L extends true ? { position: number } : {});
 export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.BedWars]: ProcessedGameBED & AdditionalStatistics<T, L>;
     [Game.BlockDrop]: ProcessedGameDROP & AdditionalStatistics<T, L>;
@@ -301,12 +302,14 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
     response: any
 ): ProcessedGame<T, L>[G] | null {
     if (!response) return null;
+    if ("index" in response && response.index === 2147483646) return null;
+    if (typeof response.xp === "undefined") return null;
 
     let data = processors[game](response) as ProcessedGame<T, L>[G];
 
-    if (timeframe === Timeframe.AllTime && "xp" in data) data.level = calculateLevelFromXP(data.xp, game) ?? 1;
+    if (timeframe === Timeframe.AllTime && "xp" in data) (data as any).level = calculateLevelFromXP(data.xp, game) ?? 1;
     if (timeframe === Timeframe.AllTime && "first_played" in data) data.first_played = response.first_played;
-    if (isLeaderboard && data.id !== Game.ParkourWorlds) data.position = response.human_index;
+    if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
 
     return data;
 }
@@ -314,123 +317,123 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
 export const processors = {
     [Game.BedWars]: (response: any): ProcessedGameBED => ({
         id: Game.BedWars,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        final_kills: response.final_kills,
-        beds_destroyed: response.beds_destroyed,
+        final_kills: response.final_kills ?? 0,
+        beds_destroyed: response.beds_destroyed ?? 0,
     }),
     [Game.BlockDrop]: (response: any): ProcessedGameDROP => ({
         id: Game.BlockDrop,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        deaths: response.deaths,
-        blocks_destroyed: response.blocks_destroyed,
-        powerups_collected: response.powerups_collected,
-        vaults_used: response.vaults_used,
+        deaths: response.deaths ?? 0,
+        blocks_destroyed: response.blocks_destroyed ?? 0,
+        powerups_collected: response.powerups_collected ?? 0,
+        vaults_used: response.vaults_used ?? 0,
     }),
     [Game.BlockParty]: (response: any): ProcessedGamePARTY => ({
         id: Game.BlockParty,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        powerups_collected: response.powerups_collected,
-        rounds_survived: response.rounds_survived,
+        powerups_collected: response.powerups_collected ?? 0,
+        rounds_survived: response.rounds_survived ?? 0,
     }),
     [Game.CaptureTheFlag]: (response: any): ProcessedGameCTF => ({
         id: Game.CaptureTheFlag,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        assists: response.assists,
-        flags_captured: response.flags_captured,
-        flags_returned: response.flags_returned,
+        assists: response.assists ?? 0,
+        flags_captured: response.flags_captured ?? 0,
+        flags_returned: response.flags_returned ?? 0,
     }),
     [Game.DeathRun]: (response: any): ProcessedGameDR => ({
         id: Game.DeathRun,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        checkpoints: response.checkpoints,
-        activated: response.activated,
+        checkpoints: response.checkpoints ?? 0,
+        activated: response.activated ?? 0,
     }),
     [Game.Gravity]: (response: any): ProcessedGameGRAV => ({
         id: Game.Gravity,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        deaths: response.deaths,
-        maps_completed: response.maps_completed,
-        maps_completed_without_dying: response.maps_completed_without_dying,
+        deaths: response.deaths ?? 0,
+        maps_completed: response.maps_completed ?? 0,
+        maps_completed_without_dying: response.maps_completed_without_dying ?? 0,
     }),
     [Game.GroundWars]: (response: any): ProcessedGameGROUND => ({
         id: Game.GroundWars,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        blocks_destroyed: response.blocks_destroyed,
-        blocks_placed: response.blocks_placed,
-        projectiles_fired: response.projectiles_fired,
+        blocks_destroyed: response.blocks_destroyed ?? 0,
+        blocks_placed: response.blocks_placed ?? 0,
+        projectiles_fired: response.projectiles_fired ?? 0,
     }),
     [Game.JustBuild]: (response: any): ProcessedGameBUILD => ({
         id: Game.JustBuild,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        rating_meh_received: response.rating_meh_received,
-        rating_okay_received: response.rating_okay_received,
-        rating_good_received: response.rating_good_received,
-        rating_great_received: response.rating_great_received,
-        rating_love_received: response.rating_love_received,
+        rating_meh_received: response.rating_meh_received ?? 0,
+        rating_okay_received: response.rating_okay_received ?? 0,
+        rating_good_received: response.rating_good_received ?? 0,
+        rating_great_received: response.rating_great_received ?? 0,
+        rating_love_received: response.rating_love_received ?? 0,
         total_ratings: calculateTotal([
             response.rating_meh_received,
             response.rating_okay_received,
@@ -441,137 +444,137 @@ export const processors = {
     }),
     [Game.HideAndSeek]: (response: any): ProcessedGameHIDE => ({
         id: Game.HideAndSeek,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        deaths: response.deaths,
-        hider_kills: response.hider_kills,
+        deaths: response.deaths ?? 0,
+        hider_kills: response.hider_kills ?? 0,
         kdr: calculateKDR(response.hider_kills, response.deaths),
 
-        seeker_kills: response.seeker_kills,
+        seeker_kills: response.seeker_kills ?? 0,
     }),
     [Game.MurderMystery]: (response: any): ProcessedGameMURDER => ({
         id: Game.MurderMystery,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        murders: response.murders,
-        deaths: response.deaths,
+        murders: response.murders ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.murders, response.deaths),
 
-        coins: response.coins,
-        murderer_eliminations: response.murderer_eliminations,
-        prestige: response.prestige,
+        coins: response.coins ?? 0,
+        murderer_eliminations: response.murderer_eliminations ?? 0,
+        prestige: response.prestige ?? 0,
     }),
     [Game.Skywars]: (response: any): ProcessedGameSKY => ({
         id: Game.Skywars,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        mystery_chests_destroyed: response.mystery_chests_destroyed,
-        ores_mined: response.ores_mined,
-        spells_used: response.spells_used,
+        mystery_chests_destroyed: response.mystery_chests_destroyed ?? 0,
+        ores_mined: response.ores_mined ?? 0,
+        spells_used: response.spells_used ?? 0,
     }),
     [Game.SkywarsKits]: (response: any): ProcessedGameSKYKITS => ({
         id: Game.SkywarsKits,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        mystery_chests_destroyed: response.mystery_chests_destroyed,
-        ores_mined: response.ores_mined,
-        spells_used: response.spells_used,
+        mystery_chests_destroyed: response.mystery_chests_destroyed ?? 0,
+        ores_mined: response.ores_mined ?? 0,
+        spells_used: response.spells_used ?? 0,
         selected_kit: response.selected_kit,
     }),
     [Game.SkywarsClassic]: (response: any): ProcessedGameSKYCLASSIC => ({
         id: Game.SkywarsClassic,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
         selected_kit: response.selected_kit,
     }),
     [Game.SurvivalGames]: (response: any): ProcessedGameSG => ({
         id: Game.SurvivalGames,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        cows: response.cows,
-        deathmatches: response.deathmatches,
-        crates: response.crates,
-        teleporters_used: response.teleporters_used,
-        launchpads_used: response.launchpads_used,
-        flares_used: response.flares_used,
+        cows: response.cows ?? 0,
+        deathmatches: response.deathmatches ?? 0,
+        crates: response.crates ?? 0,
+        teleporters_used: response.teleporters_used ?? 0,
+        launchpads_used: response.launchpads_used ?? 0,
+        flares_used: response.flares_used ?? 0,
     }),
     [Game.TheBridge]: (response: any): ProcessedGameBRIDGE => ({
         id: Game.TheBridge,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
-        losses: calculateLosses(response.played, response.victories),
-        win_percentage: calculateWinPercentage(response.victories, response.played),
+        played: response.played ?? response.m_solo_played ?? 0,
+        victories: response.victories ?? response.m_solo_victories ?? 0,
+        losses: calculateLosses(response.played ?? response.m_solo_played, response.victories ?? response.m_solo_victories),
+        win_percentage: calculateWinPercentage(response.victories ?? response.m_solo_victories, response.played ?? response.m_solo_played),
 
-        kills: response.kills,
-        deaths: response.deaths,
-        kdr: calculateKDR(response.kills, response.deaths),
+        kills: response.kills ?? response.m_solo_kills ?? 0,
+        deaths: response.deaths ?? response.m_solo_deaths ?? 0,
+        kdr: calculateKDR(response.kills ?? response.m_solo_kills, response.deaths ?? response.m_solo_deaths),
 
-        goals: response.goals,
+        goals: response.goals ?? response.m_solo_goals ?? 0,
     }),
     [Game.TreasureWars]: (response: any): ProcessedGameWARS => ({
         id: Game.TreasureWars,
-        xp: response.xp,
+        xp: response.xp ?? 0,
 
-        played: response.played,
-        victories: response.victories,
+        played: response.played ?? 0,
+        victories: response.victories ?? 0,
         losses: calculateLosses(response.played, response.victories),
         win_percentage: calculateWinPercentage(response.victories, response.played),
 
-        kills: response.kills,
-        deaths: response.deaths,
+        kills: response.kills ?? 0,
+        deaths: response.deaths ?? 0,
         kdr: calculateKDR(response.kills, response.deaths),
 
-        final_kills: response.final_kills,
-        treasure_destroyed: response.treasure_destroyed,
-        prestige: response.prestige,
+        final_kills: response.final_kills ?? 0,
+        treasure_destroyed: response.treasure_destroyed ?? 0,
+        prestige: response.prestige ?? 0,
     }),
     [Game.ParkourWorlds]: (response: any): ProcessedGamePARKOUR => ({
         id: Game.ParkourWorlds,
@@ -579,7 +582,7 @@ export const processors = {
             .filter(([_, value]) => typeof value === "object")
             .map(([key, value]: [string, any]) => ({
                 name: key,
-                parkour_stars: value.parkour_stars,
+                parkour_stars: value.parkour_stars ?? 0,
                 courses: Object.entries(value)
                     .filter(([_, value]) => typeof value === "object")
                     .map(([key, value]: [string, any]) => ({
@@ -594,10 +597,10 @@ export const processors = {
                             y: Number(value.split(",")[1]),
                             z: Number(value.split(",")[2]),
                         })),
-                        course_stars: value.course_stars,
+                        course_stars: value.course_stars ?? 0,
                     })),
             })) as any,
-        total_stars: response.parkours.total_stars,
+        total_stars: response.parkours.total_stars ?? 0,
     }),
 };
 
@@ -621,4 +624,17 @@ export function calculateTotal(values: number[]): number {
 }
 export function roundTo(value: number, places: number = 2): number {
     return validateNumber(Number(value.toFixed(places)));
+}
+
+export interface ProcessedAllGamesResponse {
+    player: ProcessedPlayerResponse;
+    statistics: {
+        [G in Game]: ProcessedGame<Timeframe.AllTime, false>[G] | null;
+    };
+}
+
+export interface ProcessedMonthlyGamesResponse {
+    statistics: {
+        [G in Game]: ProcessedGame<Timeframe.Monthly, false>[G] | null;
+    };
 }
