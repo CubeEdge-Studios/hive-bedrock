@@ -178,13 +178,77 @@ export default class HiveAPI {
         };
     }
 
-    // /game/season/player/{game}/{player}/{season};
-    public async getSeasonalStatistics(identifier: string, game: Game, season?: number): Promise<TODO> {}
+    /**
+     * `/game/season/player/{game}/{player}/{season}` Gets seasonal statistics for a player
+     * @param identifier Username or UUID of the player
+     * @param game The game to get the statistics for
+     * @param season The season to get the statistics for
+     * @returns The player's seasonal statistics
+     */
+    public async getSeasonalStatistics<G extends Game>(
+        identifier: string,
+        game: G,
+        season: number = 1
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G] | null>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/player/${game}/${identifier}/${season}`);
+        if (error) return { data: null, error, meta };
+        let data = processGame(game, Timeframe.Monthly, true, response);
+        return { data, error: null, meta };
+    }
 
-    // /game/{timeframe}/{game}
-    public async getLeaderboard(identifier: string, timeframe: Timeframe, game: Game, options?: { month?: number; year?: number }): Promise<TODO> {}
-    // /game/season/{game}/{season}
-    public async getSeasonalLeaderboard(identifier: string, game: Game, season?: number): Promise<TODO> {}
+    /**
+     * `/game/all/{game}` Gets statistics for a game
+     * @param timeframe The timeframe to get the statistics for
+     * @param game The game to get the statistics for
+     * @param options Additional options including specific month and year
+     */
+    public async getLeaderboard<G extends Game>(
+        timeframe: Timeframe.AllTime,
+        game: G
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.AllTime, true>[G][] | null>>;
+    public async getLeaderboard<G extends Game>(
+        timeframe: Timeframe.Monthly,
+        game: G
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][] | null>>;
+    public async getLeaderboard<T extends Timeframe, G extends Game>(
+        timeframe: T,
+        game: G,
+        options?: { month?: number; year?: number }
+    ): Promise<MethodResponse<ProcessedGame<Timeframe, true>[G][] | null>> {
+        if (timeframe === Timeframe.Monthly)
+            return this._getLeaderboardMonthly(game, options?.month || new Date().getMonth() + 1, options?.year || new Date().getFullYear());
+        return this._getLeaderboardAllTime(game);
+    }
+    // /game/all/{game}
+    private async _getLeaderboardAllTime<G extends Game>(game: G): Promise<MethodResponse<ProcessedGame<Timeframe.AllTime, true>[G][] | null>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/all/${game}`);
+        if (error) return { data: null, error, meta };
+        let data = response.map((res: any) => processGame(game, Timeframe.AllTime, true, res));
+        return { data, error: null, meta };
+    }
+    // /game/monthly/{game}/{year}/{month}
+    private async _getLeaderboardMonthly<G extends Game>(
+        game: G,
+        month: number,
+        year: number
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][] | null>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/monthly/${game}/${year}/${month}`);
+        if (error) return { data: null, error, meta };
+        let data = response.map((res: any) => processGame(game, Timeframe.Monthly, true, res));
+        return { data, error: null, meta };
+    }
+    /**
+     * `/game/season/{game}/{season}` Gets seasonal statistics for a game
+     * @param game The game to get the statistics for
+     * @param season The season to get the statistics for
+     * @returns The seasonal statistics for the game
+     */
+    public async getSeasonalLeaderboard<G extends Game>(game: G, season: number = 1): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][]>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/${game}/${season ?? 1}`);
+        if (error) return { data: null, error, meta };
+        let data = response.map((res: any) => processGame(game, Timeframe.Monthly, true, res));
+        return { data, error: null, meta };
+    }
 
     /**
      * `/global/statistics` Gets global statistics

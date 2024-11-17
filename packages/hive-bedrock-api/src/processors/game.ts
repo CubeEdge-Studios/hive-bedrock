@@ -273,8 +273,10 @@ export interface ProcessedGamePARKOUR {
     }[];
     total_stars: number;
 }
-export type AdditionalStatistics<T extends Timeframe, L extends boolean> = (T extends Timeframe.AllTime ? { level: number; first_played: number } : {}) &
-    (L extends true ? { position: number } : {});
+export type AdditionalStatistics<T extends Timeframe, L extends boolean> = (T extends Timeframe.AllTime
+    ? { level: number } & (L extends true ? {} : { first_played: number })
+    : {}) &
+    (L extends true ? { position: number; username: string; UUID: string } : {});
 export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.BedWars]: ProcessedGameBED & AdditionalStatistics<T, L>;
     [Game.BlockDrop]: ProcessedGameDROP & AdditionalStatistics<T, L>;
@@ -302,14 +304,17 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
     response: any
 ): ProcessedGame<T, L>[G] | null {
     if (!response) return null;
-    if ("index" in response && response.index === 2147483646) return null;
-    if (typeof response.xp === "undefined") return null;
+    if ("index" in response && response.human_index === 2147483647) return null;
+    if (Array.isArray(response)) return null;
 
     let data = processors[game](response) as ProcessedGame<T, L>[G];
+    if ("played" in data && data.played === 0) return null;
 
     if (timeframe === Timeframe.AllTime && "xp" in data) (data as any).level = calculateLevelFromXP(data.xp, game) ?? 1;
     if (timeframe === Timeframe.AllTime && "first_played" in data) data.first_played = response.first_played;
     if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
+    if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).username = response.username;
+    if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).UUID = response.UUID;
 
     return data;
 }
