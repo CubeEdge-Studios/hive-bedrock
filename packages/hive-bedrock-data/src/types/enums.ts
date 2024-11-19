@@ -27,7 +27,6 @@ export enum MapSeason {
     Autumn = "AUTUMN",
 }
 
-// currently the same as Game_Variant_Type
 export enum MapVariant {
     Regular = "REGULAR",
     Duos = "DUOS",

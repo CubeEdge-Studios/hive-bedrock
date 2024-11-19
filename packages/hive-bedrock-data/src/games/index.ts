@@ -1,4 +1,4 @@
-import { Game } from "../types/games.types";
+import { Game } from "../types/games";
 
 export const IMAGE_CDN = "https://cdn.playhive.com";
 
