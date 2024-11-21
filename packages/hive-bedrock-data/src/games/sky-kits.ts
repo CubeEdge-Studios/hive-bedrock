@@ -2,7 +2,7 @@ import { IMAGE_CDN } from ".";
 import { Game, GameData } from "../types/games";
 
 export default {
-    id: Game.SkywarsKits,
+    id: Game.SkyWarsKits,
     short_name: "SKY-KITS",
     name: "SkyWars Kits",
 
@@ -15,4 +15,4 @@ export default {
         increment: 150,
         cap: 52,
     },
-} satisfies GameData<Game.SkywarsKits>;
+} satisfies GameData<Game.SkyWarsKits>;

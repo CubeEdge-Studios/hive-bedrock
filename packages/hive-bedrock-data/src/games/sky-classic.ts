@@ -2,7 +2,7 @@ import { IMAGE_CDN } from ".";
 import { Game, GameData } from "../types/games";
 
 export default {
-    id: Game.SkywarsClassic,
+    id: Game.SkyWarsClassic,
     short_name: "SKY-CLASSIC",
     name: "SkyWars Classic",
 
@@ -15,4 +15,4 @@ export default {
         increment: 150,
         cap: 52,
     },
-} satisfies GameData<Game.SkywarsClassic>;
+} satisfies GameData<Game.SkyWarsClassic>;
