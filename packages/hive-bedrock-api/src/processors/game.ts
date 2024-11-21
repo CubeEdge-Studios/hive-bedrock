@@ -154,7 +154,7 @@ export interface ProcessedGameMURDER {
     prestige: number;
 }
 export interface ProcessedGameSKY {
-    id: Game.Skywars;
+    id: Game.SkyWars;
     xp: number;
 
     played: number;
@@ -171,7 +171,7 @@ export interface ProcessedGameSKY {
     spells_used: number;
 }
 export interface ProcessedGameSKYKITS {
-    id: Game.SkywarsKits;
+    id: Game.SkyWarsKits;
     xp: number;
 
     played: number;
@@ -189,7 +189,7 @@ export interface ProcessedGameSKYKITS {
     selected_kit: string;
 }
 export interface ProcessedGameSKYCLASSIC {
-    id: Game.SkywarsClassic;
+    id: Game.SkyWarsClassic;
     xp: number;
 
     played: number;
@@ -288,13 +288,13 @@ export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.JustBuild]: ProcessedGameBUILD & AdditionalStatistics<T, L>;
     [Game.HideAndSeek]: ProcessedGameHIDE & AdditionalStatistics<T, L>;
     [Game.MurderMystery]: ProcessedGameMURDER & AdditionalStatistics<T, L>;
-    [Game.Skywars]: ProcessedGameSKY & AdditionalStatistics<T, L>;
-    [Game.SkywarsClassic]: ProcessedGameSKYCLASSIC & AdditionalStatistics<T, L>;
-    [Game.SkywarsKits]: ProcessedGameSKYKITS & AdditionalStatistics<T, L>;
+    [Game.SkyWars]: ProcessedGameSKY & AdditionalStatistics<T, L>;
+    [Game.SkyWarsClassic]: ProcessedGameSKYCLASSIC & AdditionalStatistics<T, L>;
+    [Game.SkyWarsKits]: ProcessedGameSKYKITS & AdditionalStatistics<T, L>;
     [Game.SurvivalGames]: ProcessedGameSG & AdditionalStatistics<T, L>;
     [Game.TheBridge]: ProcessedGameBRIDGE & AdditionalStatistics<T, L>;
     [Game.TreasureWars]: ProcessedGameWARS & AdditionalStatistics<T, L>;
-    [Game.ParkourWorlds]: ProcessedGamePARKOUR;
+    [Game.ParkourWorlds]: L extends true ? never : T extends Timeframe.Monthly ? never : ProcessedGamePARKOUR;
 }
 
 export default function processGame<G extends Game, T extends Timeframe, L extends boolean>(
@@ -479,8 +479,8 @@ export const processors = {
         murderer_eliminations: response.murderer_eliminations ?? 0,
         prestige: response.prestige ?? 0,
     }),
-    [Game.Skywars]: (response: any): ProcessedGameSKY => ({
-        id: Game.Skywars,
+    [Game.SkyWars]: (response: any): ProcessedGameSKY => ({
+        id: Game.SkyWars,
         xp: response.xp ?? 0,
 
         played: response.played ?? 0,
@@ -496,8 +496,8 @@ export const processors = {
         ores_mined: response.ores_mined ?? 0,
         spells_used: response.spells_used ?? 0,
     }),
-    [Game.SkywarsKits]: (response: any): ProcessedGameSKYKITS => ({
-        id: Game.SkywarsKits,
+    [Game.SkyWarsKits]: (response: any): ProcessedGameSKYKITS => ({
+        id: Game.SkyWarsKits,
         xp: response.xp ?? 0,
 
         played: response.played ?? 0,
@@ -514,8 +514,8 @@ export const processors = {
         spells_used: response.spells_used ?? 0,
         selected_kit: response.selected_kit,
     }),
-    [Game.SkywarsClassic]: (response: any): ProcessedGameSKYCLASSIC => ({
-        id: Game.SkywarsClassic,
+    [Game.SkyWarsClassic]: (response: any): ProcessedGameSKYCLASSIC => ({
+        id: Game.SkyWarsClassic,
         xp: response.xp ?? 0,
 
         played: response.played ?? 0,

@@ -100,7 +100,7 @@ export default class HiveAPI {
         identifier: string,
         timeframe: Timeframe.Monthly,
         options: { game: G; month?: number; year?: number }
-    ): Promise<MethodResponse<ProcessedGame<Timeframe.AllTime, false>[G]>>;
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, false>[G]>>;
     public async getStatistics(identifier: string, timeframe: Timeframe, options?: { game?: Game; month?: number; year?: number }) {
         if (timeframe === Timeframe.AllTime) {
             if (options?.game) return this._getStatisticsAllTime(identifier, options.game);
