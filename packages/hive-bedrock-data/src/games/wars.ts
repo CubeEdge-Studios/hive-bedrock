@@ -18,4 +18,4 @@ export default {
         increment: 150,
         cap: 52,
     },
-} as GameData<Game.TreasureWars>;
+} satisfies GameData<Game.TreasureWars>;

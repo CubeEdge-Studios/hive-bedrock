@@ -32,7 +32,7 @@ export function _calculateLevelFromXP(
 
             previous_level_xp = total_xp;
 
-            increment = Math.floor(increment * multiplier);
+            increment = Math.floor(increment * (multiplier ?? 1.08));
             level_increment += increment;
             total_xp += level_increment;
         }

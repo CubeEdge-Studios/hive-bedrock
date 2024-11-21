@@ -1,4 +1,4 @@
-import { Game } from "../types/games";
+import { Game, GameData } from "../types/games";
 
 export const IMAGE_CDN = "https://cdn.playhive.com";
 
@@ -38,4 +38,4 @@ export const Games = {
     [Game.TreasureWars]: wars,
     [Game.BedWars]: bed,
     [Game.ParkourWorlds]: parkour,
-};
+} as { [G in Game]: GameData<G> };
