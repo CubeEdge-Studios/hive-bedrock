@@ -1,20 +1,20 @@
 import { Games } from "../games";
-import { Game } from "../types/games.types";
+import { Game } from "../types/games";
 
-export function _calculateLevelFromXP(xp: number, game_id: Game): number | null {
-    const game_data = Games[game_id];
-    if (!game_data) return null;
-
-    if (!game_data.has_levels) return null;
+export function _calculateLevelFromXP(
+    xp: number,
+    game_id: Game
+): number | null {
+    const metadata = Games[game_id];
+    if (!metadata || !metadata.levelling) return null;
 
     // Bridge uses a different xp-level system to the other games
-    if (game_data.id === Game.TheBridge) {
+    if (metadata.id === Game.TheBridge) {
         // These values shouldn't change as only bridge uses this level system
-        let max_level = game_data.max_level;
-        let level_multiplier = game_data.level_multiplier ?? 1.08;
-        let increment = game_data.level_increment;
-        let level_increment = game_data.level_increment;
-        let total_xp = game_data.level_increment; // The total amount of xp required to reach n level
+        let { max_level, multiplier, increment } = metadata.levelling;
+
+        let level_increment = increment;
+        let total_xp = increment; // The total amount of xp required to reach n level
         let previous_level_xp = 0; // The total amount of xp required to reach n-1 level
 
         for (let level = 1; level <= max_level; level++) {
@@ -32,7 +32,7 @@ export function _calculateLevelFromXP(xp: number, game_id: Game): number | null 
 
             previous_level_xp = total_xp;
 
-            increment = Math.floor(increment * level_multiplier);
+            increment = Math.floor(increment * multiplier);
             level_increment += increment;
             total_xp += level_increment;
         }
@@ -40,32 +40,35 @@ export function _calculateLevelFromXP(xp: number, game_id: Game): number | null 
         return 1;
     }
 
-    let level_increment = game_data.level_increment / 2; // The amount of xp that is added between each level
-    let level_cap = game_data.level_cap; // The level where the difficulty of each level dosen't increase
+    let { increment, cap } = metadata.levelling;
 
     let level =
-        (level_increment + Math.sqrt(level_increment * (level_increment + 4 * xp))) /
-        (2 * level_increment); // Calculate the level without the level cap
+        (increment + Math.sqrt(increment * (increment + 4 * xp))) /
+        (2 * increment); // Calculate the level without the level cap
 
-    if (!level_cap || level <= level_cap) return Math.floor(level * 100) / 100; // Return if there is no level cap or the level dosen't reach the level cap
+    if (!cap || level <= cap) return Math.floor(level * 100) / 100; // Return if there is no level cap or the level dosen't reach the level cap
 
     let level_with_cap =
-        level_cap +
-        (xp - (level_increment * Math.pow(level_cap - 1, 2) + (level_cap - 1) * level_increment)) /
-            ((level_cap - 1) * level_increment * 2); // The level is larger than the cap so the excess xp is removed and a level is calculated
+        cap +
+        (xp - (increment * Math.pow(cap - 1, 2) + (cap - 1) * increment)) /
+            ((cap - 1) * increment * 2); // The level is larger than the cap so the excess xp is removed and a level is calculated
 
     return Math.floor(level_with_cap * 100) / 100;
 }
 
-export default function calculateLevelFromXP(xp: number, game_id: Game): number | null {
-    const game = Games[game_id];
-    if (!game) return null;
+export default function calculateLevelFromXP(
+    xp: number,
+    game_id: Game
+): number | null {
+    const metadata = Games[game_id];
+    if (!metadata || !metadata.levelling) return null;
 
     let level = _calculateLevelFromXP(xp, game_id);
     if (!level) return null;
 
     if (level < 1) return 1;
-    if (level > game.max_level) return game.max_level;
+    if (level > metadata.levelling.max_level)
+        return metadata.levelling.max_level;
 
     return _calculateLevelFromXP(xp, game_id);
 }

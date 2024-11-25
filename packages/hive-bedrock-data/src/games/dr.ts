@@ -1,33 +1,19 @@
 import { IMAGE_CDN } from ".";
-import { Game, Game_Variant_Queue_Type, Game_Variant_Type, Game_Data } from "../types/games.types";
+import { Game, GameData } from "../types/games";
 
 export default {
     id: Game.DeathRun,
     short_name: "DR",
     name: "Deathrun",
-    discontinued: false,
 
-    description: "Race through parkour maps, avoiding the obstacles being activated by deaths.",
+    description:
+        "Race through parkour maps, avoiding the obstacles being activated by deaths.",
     icon_url: IMAGE_CDN + "/icons/hub/games/dr.png",
+    colour: "#dac4a2",
 
-    has_levels: true,
-    max_level: 75,
-    can_prestige: false,
-    max_prestige: null,
-    level_increment: 200,
-    level_cap: 42,
-
-    colours: ["#dac4a2", "#472d21", "#7c6e61", "#69594b", "#6c645c"],
-
-    modes: [
-        {
-            id: "dr",
-            type: Game_Variant_Type.Regular,
-            name: "Regular",
-            team_size: 20,
-            team_amount: 1,
-            limited: false,
-            queue_type: Game_Variant_Queue_Type.Default,
-        },
-    ],
-} as Game_Data<Game.DeathRun>;
+    levelling: {
+        max_level: 75,
+        increment: 200,
+        cap: 42,
+    },
+} satisfies GameData<Game.DeathRun>;

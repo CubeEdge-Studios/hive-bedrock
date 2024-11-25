@@ -1,4 +1,4 @@
-import { Game } from "../types/games.types";
+import { Game } from "../types/games";
 
 export const IMAGE_CDN = "https://cdn.playhive.com";
 
@@ -17,6 +17,8 @@ import sky from "./sky";
 import wars from "./wars";
 import bed from "./bed";
 import parkour from "./parkour";
+import skyKits from "./sky-kits";
+import skyClassic from "./sky-classic";
 
 export const Games = {
     [Game.BlockDrop]: drop,
@@ -28,7 +30,9 @@ export const Games = {
     [Game.HideAndSeek]: hide,
     [Game.JustBuild]: build,
     [Game.MurderMystery]: murder,
-    [Game.Skywars]: sky,
+    [Game.SkyWars]: sky,
+    [Game.SkyWarsClassic]: skyClassic,
+    [Game.SkyWarsKits]: skyKits,
     [Game.SurvivalGames]: sg,
     [Game.TheBridge]: bridge,
     [Game.TreasureWars]: wars,
