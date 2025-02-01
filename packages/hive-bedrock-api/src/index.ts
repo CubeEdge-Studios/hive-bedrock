@@ -5,9 +5,7 @@ import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistic
 import { ProcessedMapResponse } from "./processors/map";
 import { ProcessedGameMetadata } from "./processors/meta";
 import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
-import processGame, { ProcessedAllGamesResponse, ProcessedGame, ProcessedGameBED, ProcessedMonthlyGamesResponse } from "./processors/game";
-
-type TODO = any;
+import processGame, { ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game";
 
 interface Options {
     resolveDynamicTitles?: boolean;
@@ -209,6 +207,11 @@ export default class HiveAPI {
     public async getLeaderboard<G extends Game>(
         timeframe: Timeframe.Monthly,
         game: G
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][] | null>>;
+    public async getLeaderboard<G extends Game>(
+        timeframe: Timeframe.Monthly,
+        game: G,
+        options: { month?: number; year?: number }
     ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][] | null>>;
     public async getLeaderboard<T extends Timeframe, G extends Game>(
         timeframe: T,

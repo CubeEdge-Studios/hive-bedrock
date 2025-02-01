@@ -308,10 +308,11 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
     if (Array.isArray(response)) return null;
 
     let data = processors[game](response) as ProcessedGame<T, L>[G];
+    if (!data) return null;
     if ("played" in data && data.played === 0) return null;
 
     if (timeframe === Timeframe.AllTime && "xp" in data) (data as any).level = calculateLevelFromXP(data.xp, game) ?? 1;
-    if (timeframe === Timeframe.AllTime && "first_played" in data) data.first_played = response.first_played;
+    if (timeframe === Timeframe.AllTime && "first_played" in response) (data as any).first_played = response.first_played;
     if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
     if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).username = response.username;
     if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).UUID = response.UUID;
@@ -581,32 +582,35 @@ export const processors = {
         treasure_destroyed: response.treasure_destroyed ?? 0,
         prestige: response.prestige ?? 0,
     }),
-    [Game.ParkourWorlds]: (response: any): ProcessedGamePARKOUR => ({
-        id: Game.ParkourWorlds,
-        worlds: Object.entries(response.parkours)
-            .filter(([_, value]) => typeof value === "object")
-            .map(([key, value]: [string, any]) => ({
-                name: key,
-                parkour_stars: value.parkour_stars ?? 0,
-                courses: Object.entries(value)
-                    .filter(([_, value]) => typeof value === "object")
-                    .map(([key, value]: [string, any]) => ({
-                        name: key,
-                        best_run_time: value.best_run_time,
-                        best_checkpoint_times: Object.entries(value.best_checkpoint_times).map(([key, value]: [string, any]) => ({
-                            position: { x: Number(key.split(",")[0]), y: Number(key.split(",")[1]), z: Number(key.split(",")[2]) },
-                            time: value,
-                        })),
-                        collected_stars: value.collected_stars.map((value: string) => ({
-                            x: Number(value.split(",")[0]),
-                            y: Number(value.split(",")[1]),
-                            z: Number(value.split(",")[2]),
-                        })),
-                        course_stars: value.course_stars ?? 0,
-                    })),
-            })) as any,
-        total_stars: response.parkours.total_stars ?? 0,
-    }),
+    [Game.ParkourWorlds]: (response: any): ProcessedGamePARKOUR | null =>
+        response.parkours
+            ? {
+                  id: Game.ParkourWorlds,
+                  worlds: Object.entries(response.parkours)
+                      .filter(([_, value]) => typeof value === "object")
+                      .map(([key, value]: [string, any]) => ({
+                          name: key,
+                          parkour_stars: value.parkour_stars ?? 0,
+                          courses: Object.entries(value)
+                              .filter(([_, value]) => typeof value === "object")
+                              .map(([key, value]: [string, any]) => ({
+                                  name: key,
+                                  best_run_time: value.best_run_time,
+                                  best_checkpoint_times: Object.entries(value.best_checkpoint_times).map(([key, value]: [string, any]) => ({
+                                      position: { x: Number(key.split(",")[0]), y: Number(key.split(",")[1]), z: Number(key.split(",")[2]) },
+                                      time: value,
+                                  })),
+                                  collected_stars: value.collected_stars.map((value: string) => ({
+                                      x: Number(value.split(",")[0]),
+                                      y: Number(value.split(",")[1]),
+                                      z: Number(value.split(",")[2]),
+                                  })),
+                                  course_stars: value.course_stars ?? 0,
+                              })),
+                      })) as any,
+                  total_stars: response.parkours.total_stars ?? 0,
+              }
+            : null,
 };
 
 export function validateNumber(value: number, def: number = 0): number {

@@ -41,6 +41,7 @@ export function _calculateLevelFromXP(
     }
 
     let { increment, cap } = metadata.levelling;
+    increment = increment / 2;
 
     let level =
         (increment + Math.sqrt(increment * (increment + 4 * xp))) /

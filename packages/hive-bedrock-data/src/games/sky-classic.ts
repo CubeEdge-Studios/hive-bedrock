@@ -6,6 +6,8 @@ export default {
     short_name: "SKY-CLASSIC",
     name: "SkyWars Classic",
 
+    variant: Game.SkyWars,
+
     description: "No lucky ores. Loot chests to collect items.",
     icon_url: IMAGE_CDN + "/icons/hub/games/sky.png",
     colour: "#d6654d",

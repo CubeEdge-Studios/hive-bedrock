@@ -14,21 +14,51 @@ export interface ProcessedPlayerResponse {
     };
 
     equipped_cosmetics: {
-        costume: string;
-        avatar: { name: string; url: string };
-        hub_title: string;
-        hat: string;
-        backbling: string;
+        costume: CosmeticResponseTypes[CosmeticType.Costume];
+        avatar: CosmeticResponseTypes[CosmeticType.Avatar];
+        hub_title: CosmeticResponseTypes[CosmeticType.HubTitle];
+        hat: CosmeticResponseTypes[CosmeticType.Hat];
+        backbling: CosmeticResponseTypes[CosmeticType.Backbling];
     };
 
     owned_cosmetics: {
-        costume: string[];
-        avatar: { name: string; url: string }[];
-        hub_title: string[];
-        hat: string[];
-        pet: string[];
-        mount: string[];
-        backbling: string[];
+        costume: CosmeticResponseTypes[CosmeticType.Costume][];
+        avatar: CosmeticResponseTypes[CosmeticType.Avatar][];
+        hub_title: CosmeticResponseTypes[CosmeticType.HubTitle][];
+        hat: CosmeticResponseTypes[CosmeticType.Hat][];
+        pet: CosmeticResponseTypes[CosmeticType.Pet][];
+        mount: CosmeticResponseTypes[CosmeticType.Mount][];
+        backbling: CosmeticResponseTypes[CosmeticType.Backbling][];
+    };
+}
+
+export enum CosmeticType {
+    Costume = "costume",
+    Avatar = "avatar",
+    HubTitle = "hub_title",
+    Hat = "hat",
+    Pet = "pet",
+    Mount = "mount",
+    Backbling = "backbling",
+}
+export interface CosmeticResponseTypes {
+    [CosmeticType.Costume]: string;
+    [CosmeticType.Avatar]: {
+        name: string;
+        url: string;
+    };
+    [CosmeticType.HubTitle]: string;
+    [CosmeticType.Hat]: {
+        name: string;
+        icon: string;
+        rarity: string;
+    };
+    [CosmeticType.Pet]: string;
+    [CosmeticType.Mount]: string;
+    [CosmeticType.Backbling]: {
+        name: string;
+        icon: string;
+        rarity: string;
     };
 }
 

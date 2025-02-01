@@ -40,6 +40,7 @@ export default function calculateXPFromLevel(
     }
 
     let { cap, increment } = metadata.levelling;
+    increment = increment / 2;
 
     let xp = increment * Math.pow(level, 2) - increment * level;
     if (!cap || level <= cap) return xp;
