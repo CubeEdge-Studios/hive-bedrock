@@ -1,5 +1,10 @@
 import { IMAGE_CDN } from ".";
-import { Game, Game_Variant_Queue_Type, Game_Variant_Type, Game_Data } from "../types/games.types";
+import {
+    Game,
+    Game_Variant_Queue_Type,
+    Game_Variant_Type,
+    Game_Data,
+} from "../types/games.types";
 
 export default {
     id: Game.BedWars,
@@ -7,15 +12,16 @@ export default {
     name: "BedWars",
     discontinued: false,
 
-    description: "Defend your bed, eliminate others, solo or as a team. Last team standing wins!",
+    description:
+        "Defend your bed, eliminate others, solo or as a team. Last team standing wins!",
     icon_url: IMAGE_CDN + "/icons/hub/games/bed.png",
 
     has_levels: true,
-    max_level: 50, // More levels to be released
+    max_level: 75, // More levels to be released
     can_prestige: false,
     max_prestige: 0,
     level_increment: 150,
-    level_cap: null,
+    level_cap: 52,
 
     // still unsure about main accent colour
     colours: ["#894233", "#c7d5d7", "#d44c43", "#939fa6", "#482618"],
