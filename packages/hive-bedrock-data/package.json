@@ -1,6 +1,6 @@
 {
     "name": "hive-bedrock-data",
-    "version": "2.0.0-alpha.6",
+    "version": "2.0.0-alpha.7",
     "description": "A repo to store and calculate data and type definitions from The Hive: Bedrock Edition server.",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",

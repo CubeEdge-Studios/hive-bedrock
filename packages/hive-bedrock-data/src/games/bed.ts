@@ -12,8 +12,8 @@ export default {
     colour: "#894233",
 
     levelling: {
-        max_level: 50,
+        max_level: 75,
         increment: 150,
-        cap: null,
+        cap: 52,
     },
 } satisfies GameData<Game.BedWars>;
