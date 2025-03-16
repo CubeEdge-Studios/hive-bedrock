@@ -9,6 +9,7 @@ interface Statistics_SKY {
     mystery_chests_destroyed: number;
     ores_mined: number;
     spells_used: number;
+    prestige: number;
 }
 
 interface Statistics_SKY_AllTime extends Statistics_SKY {

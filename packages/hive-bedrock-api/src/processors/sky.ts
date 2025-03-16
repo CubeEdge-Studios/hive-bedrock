@@ -41,6 +41,7 @@ export function processAllTime_SKY(
         ores_mined: statistics.ores_mined ?? 0,
         spells_used: statistics.spells_used ?? 0,
 
+        prestige: statistics.prestige ?? 0,
         first_played: statistics.first_played ?? null,
     };
 }
@@ -63,5 +64,7 @@ export function processMonthly_SKY(
         mystery_chests_destroyed: statistics.mystery_chests_destroyed ?? 0,
         ores_mined: statistics.ores_mined ?? 0,
         spells_used: statistics.spells_used ?? 0,
+
+        prestige: statistics.prestige ?? 0,
     };
 }
