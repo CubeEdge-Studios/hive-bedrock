@@ -5,16 +5,21 @@ import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistic
 import { ProcessedMapResponse } from "./processors/map";
 import { ProcessedGameMetadata } from "./processors/meta";
 import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
-import processGame, { ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game";
+import processGame, { AvailableLeaderboardResponse, ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game";
 
 interface Options {
     resolveDynamicTitles?: boolean;
+    useModernLeaderboardSource?: boolean;
+
     apiBaseEndpoint?: string;
     requestInit?: RequestInit;
 }
 
 export default class HiveAPI {
-    constructor(public options: Options = { resolveDynamicTitles: true, apiBaseEndpoint: API_BASE_ENDPOINT }) {}
+    constructor(public options: Options) {
+        this.options = options;
+        this.options.apiBaseEndpoint = this.options.apiBaseEndpoint ?? API_BASE_ENDPOINT;
+    }
 
     private async _fetchAPI<R extends any>(endpoint: string): Promise<MethodResponse<R>> {
         const url = this.options.apiBaseEndpoint + endpoint;
@@ -25,6 +30,7 @@ export default class HiveAPI {
                 ...this.options.requestInit,
                 headers: {
                     "X-Hive-Resolve-Stat-Track": (this.options.resolveDynamicTitles ?? true).toString(),
+                    "X-Hive-Leaderboard-Source": this.options.useModernLeaderboardSource ? "modern" : "legacy",
                     ...this.options.requestInit?.headers,
                 },
             });
@@ -174,6 +180,12 @@ export default class HiveAPI {
             error: null,
             meta,
         };
+    }
+
+    public async getAvailableMonthlyLeaderboards<G extends Game>(game: G): Promise<MethodResponse<AvailableLeaderboardResponse>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/monthly/${game}/available`);
+        if (error) return { data: null, error, meta };
+        return { data: response, error: null, meta };
     }
 
     /**

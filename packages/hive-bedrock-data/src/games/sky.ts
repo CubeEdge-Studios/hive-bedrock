@@ -15,5 +15,6 @@ export default {
         max_level: 100,
         increment: 150,
         cap: 52,
+        max_prestige: 5,
     },
 } satisfies GameData<Game.SkyWars>;

@@ -169,6 +169,7 @@ export interface ProcessedGameSKY {
     mystery_chests_destroyed: number;
     ores_mined: number;
     spells_used: number;
+    prestige: number;
 }
 export interface ProcessedGameSKYKITS {
     id: Game.SkyWarsKits;
@@ -496,6 +497,7 @@ export const processors = {
         mystery_chests_destroyed: response.mystery_chests_destroyed ?? 0,
         ores_mined: response.ores_mined ?? 0,
         spells_used: response.spells_used ?? 0,
+        prestige: response.prestige ?? 0,
     }),
     [Game.SkyWarsKits]: (response: any): ProcessedGameSKYKITS => ({
         id: Game.SkyWarsKits,
@@ -647,3 +649,11 @@ export interface ProcessedMonthlyGamesResponse {
         [G in Game]: ProcessedGame<Timeframe.Monthly, false>[G] | null;
     };
 }
+
+export interface AvailableLeaderboard {
+    month: string;
+    year: string;
+    month_number: number;
+    resource: string;
+}
+export type AvailableLeaderboardResponse = AvailableLeaderboard[];
