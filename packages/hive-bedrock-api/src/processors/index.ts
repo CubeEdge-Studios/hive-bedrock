@@ -28,7 +28,7 @@ export const AllTimeProcessors: {
     [Game.Gravity]: processAllTime_GRAV,
     [Game.GroundWars]: processAllTime_GROUND,
     [Game.HideAndSeek]: processAllTime_HIDE,
-    [Game.JustBuild]: processAllTime_BUILD,
+    [Game.BuildBattle]: processAllTime_BUILD,
     [Game.MurderMystery]: processAllTime_MURDER,
     [Game.ParkourWorlds]: processAllTime_PARKOUR,
     [Game.Skywars]: processAllTime_SKY,
@@ -38,7 +38,9 @@ export const AllTimeProcessors: {
 };
 
 export const MonthlyProcessors: {
-    [G in Game]: G extends Game.ParkourWorlds ? never : Processor<G, Timeframe.Monthly>;
+    [G in Game]: G extends Game.ParkourWorlds
+        ? never
+        : Processor<G, Timeframe.Monthly>;
 } = {
     [Game.BedWars]: processMonthly_BED,
     [Game.BlockDrop]: processMonthly_DROP,
@@ -48,7 +50,7 @@ export const MonthlyProcessors: {
     [Game.Gravity]: processMonthly_GRAV,
     [Game.GroundWars]: processMonthly_GROUND,
     [Game.HideAndSeek]: processMonthly_HIDE,
-    [Game.JustBuild]: processMonthly_BUILD,
+    [Game.BuildBattle]: processMonthly_BUILD,
     [Game.MurderMystery]: processMonthly_MURDER,
     [Game.Skywars]: processMonthly_SKY,
     [Game.SurvivalGames]: processMonthly_SG,
@@ -58,7 +60,9 @@ export const MonthlyProcessors: {
 };
 
 export const LeaderboardProcessors: {
-    [G in Game]: G extends Game.ParkourWorlds ? never : Processor<G, Timeframe.Monthly>;
+    [G in Game]: G extends Game.ParkourWorlds
+        ? never
+        : Processor<G, Timeframe.Monthly>;
 } = {
     [Game.BedWars]: processMonthly_BED,
     [Game.BlockDrop]: processMonthly_DROP,
@@ -68,7 +72,7 @@ export const LeaderboardProcessors: {
     [Game.Gravity]: processMonthly_GRAV,
     [Game.GroundWars]: processMonthly_GROUND,
     [Game.HideAndSeek]: processMonthly_HIDE,
-    [Game.JustBuild]: processMonthly_BUILD,
+    [Game.BuildBattle]: processMonthly_BUILD,
     [Game.MurderMystery]: processMonthly_MURDER,
     [Game.Skywars]: processMonthly_SKY,
     [Game.SurvivalGames]: processMonthly_SG,

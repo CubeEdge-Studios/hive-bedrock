@@ -477,7 +477,7 @@ Each game, and its string ID
 | GAME.CaptureTheFlag | `ctf`     |
 | GAME.BlockDrop      | `drop`    |
 | GAME.GroundWars     | `ground`  |
-| GAME.JustBuild      | `build`   |
+| GAME.BuildBattle    | `build`   |
 | GAME.BlockParty     | `party`   |
 | GAME.TheBridge      | `bridge`  |
 | GAME.Gravity        | `grav`    |

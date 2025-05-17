@@ -8,7 +8,10 @@ export * from "./metadata/maps.types";
 export * from "./metadata/player.types";
 export * from "./routes/index.types";
 
-export type Statistics<G extends Game, T extends Timeframe> = AllStatistics<T>[G];
+export type Statistics<
+    G extends Game,
+    T extends Timeframe
+> = AllStatistics<T>[G];
 
 interface AllStatistics<T extends Timeframe> {
     [Game.BlockDrop]: API.DropStatistics<T>;
@@ -18,7 +21,7 @@ interface AllStatistics<T extends Timeframe> {
     [Game.Gravity]: API.GravStatistics<T>;
     [Game.GroundWars]: API.GroundStatistics<T>;
     [Game.HideAndSeek]: API.HideStatistics<T>;
-    [Game.JustBuild]: API.BuildStatistics<T>;
+    [Game.BuildBattle]: API.BuildStatistics<T>;
     [Game.MurderMystery]: API.MurderStatistics<T>;
     [Game.Skywars]: API.SkyStatistics<T>;
     [Game.SurvivalGames]: API.SgStatistics<T>;
@@ -28,7 +31,10 @@ interface AllStatistics<T extends Timeframe> {
     [Game.ParkourWorlds]: API.ParkourStatistics<T>;
 }
 
-export type Leaderboards<G extends Game, T extends Timeframe> = AllLeaderboards<T>[G];
+export type Leaderboards<
+    G extends Game,
+    T extends Timeframe
+> = AllLeaderboards<T>[G];
 
 interface AllLeaderboards<T extends Timeframe> {
     [Game.BlockDrop]: API.DropLeaderboard<T>;
@@ -38,7 +44,7 @@ interface AllLeaderboards<T extends Timeframe> {
     [Game.Gravity]: API.GravLeaderboard<T>;
     [Game.GroundWars]: API.GroundLeaderboard<T>;
     [Game.HideAndSeek]: API.HideLeaderboard<T>;
-    [Game.JustBuild]: API.BuildLeaderboard<T>;
+    [Game.BuildBattle]: API.BuildLeaderboard<T>;
     [Game.MurderMystery]: API.MurderLeaderboard<T>;
     [Game.Skywars]: API.SkyLeaderboard<T>;
     [Game.SurvivalGames]: API.SgLeaderboard<T>;

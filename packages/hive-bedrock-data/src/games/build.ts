@@ -1,17 +1,23 @@
 import { IMAGE_CDN } from ".";
-import { Game, Game_Variant_Queue_Type, Game_Variant_Type, Game_Data } from "../types/games.types";
+import {
+    Game,
+    Game_Variant_Queue_Type,
+    Game_Variant_Type,
+    Game_Data,
+} from "../types/games.types";
 
 export default {
-    id: Game.JustBuild,
+    id: Game.BuildBattle,
     short_name: "BUILD",
-    name: "Just Build",
+    name: "Build Battle",
     discontinued: false,
 
-    description: "Battle it out to create the best build for a randomly chosen theme.",
+    description:
+        "Battle it out to create the best build for a randomly chosen theme.",
     icon_url: IMAGE_CDN + "/icons/hub/games/build.png",
 
     has_levels: true,
-    max_level: 20,
+    max_level: 30,
     can_prestige: false,
     max_prestige: null,
     level_increment: 100,
@@ -23,7 +29,7 @@ export default {
         {
             id: "build",
             type: Game_Variant_Type.Regular,
-            name: "Solos",
+            name: "Solo",
             team_size: 1,
             team_amount: 12,
             limited: false,
@@ -32,7 +38,7 @@ export default {
         {
             id: "buildx",
             type: Game_Variant_Type.Regular,
-            name: "Solos (Double Build Time)",
+            name: "Solo Extended",
             team_size: 1,
             team_amount: 12,
             limited: false,
@@ -50,11 +56,20 @@ export default {
         {
             id: "build-duosx",
             type: Game_Variant_Type.Duos,
-            name: "Duos (Double Build Time)",
+            name: "Duos Extended",
             team_size: 2,
             team_amount: 12,
             limited: false,
             queue_type: Game_Variant_Queue_Type.Default,
         },
+        {
+            id: "build-speed",
+            type: Game_Variant_Type.Regular,
+            name: "Speed Builders",
+            team_size: 1,
+            team_amount: 12,
+            limited: false,
+            queue_type: Game_Variant_Queue_Type.Default,
+        },
     ],
-} as Game_Data<Game.JustBuild>;
+} as Game_Data<Game.BuildBattle>;

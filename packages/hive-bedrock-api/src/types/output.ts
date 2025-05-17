@@ -32,8 +32,8 @@ import {
     Processed_HideAndSeek_MonthlyStatistics,
 } from "../processors/hide";
 import {
-    Processed_JustBuild_AllTimeStatistics,
-    Processed_JustBuild_MonthlyStatistics,
+    Processed_BuildBattle_AllTimeStatistics,
+    Processed_BuildBattle_MonthlyStatistics,
 } from "../processors/build";
 import {
     Processed_MurderMystery_AllTimeStatistics,
@@ -78,7 +78,7 @@ export interface AllTimeProcessedStatistics {
     [Game.Gravity]: Processed_Gravity_AllTimeStatistics;
     [Game.GroundWars]: Processed_GroundWars_AllTimeStatistics;
     [Game.HideAndSeek]: Processed_HideAndSeek_AllTimeStatistics;
-    [Game.JustBuild]: Processed_JustBuild_AllTimeStatistics;
+    [Game.BuildBattle]: Processed_BuildBattle_AllTimeStatistics;
     [Game.MurderMystery]: Processed_MurderMystery_AllTimeStatistics;
     [Game.Skywars]: Processed_Skywars_AllTimeStatistics;
     [Game.SurvivalGames]: Processed_SurvivalGames_AllTimeStatistics;
@@ -105,7 +105,7 @@ export interface MonthlyProcessedStatistics {
     [Game.Gravity]: Processed_Gravity_MonthlyStatistics;
     [Game.GroundWars]: Processed_GroundWars_MonthlyStatistics;
     [Game.HideAndSeek]: Processed_HideAndSeek_MonthlyStatistics;
-    [Game.JustBuild]: Processed_JustBuild_MonthlyStatistics;
+    [Game.BuildBattle]: Processed_BuildBattle_MonthlyStatistics;
     [Game.MurderMystery]: Processed_MurderMystery_MonthlyStatistics;
     [Game.Skywars]: Processed_Skywars_MonthlyStatistics;
     [Game.SurvivalGames]: Processed_SurvivalGames_MonthlyStatistics;

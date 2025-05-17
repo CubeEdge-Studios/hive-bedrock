@@ -4,9 +4,9 @@ import processPlayedAndVictories from "./helpers/processPlayedAndVictories";
 import { OmittedSpecialStatistics } from "../types/types";
 import processBuildRatings from "./helpers/processBuildRatings";
 
-export interface Processed_JustBuild_AllTimeStatistics
-    extends OmittedSpecialStatistics<Game.JustBuild, Timeframe.AllTime> {
-    id: Game.JustBuild;
+export interface Processed_BuildBattle_AllTimeStatistics
+    extends OmittedSpecialStatistics<Game.BuildBattle, Timeframe.AllTime> {
+    id: Game.BuildBattle;
     level: number;
 
     losses: number;
@@ -15,9 +15,9 @@ export interface Processed_JustBuild_AllTimeStatistics
     total_ratings: number;
     first_played: number | null;
 }
-export interface Processed_JustBuild_MonthlyStatistics
-    extends Statistics<Game.JustBuild, Timeframe.Monthly> {
-    id: Game.JustBuild;
+export interface Processed_BuildBattle_MonthlyStatistics
+    extends Statistics<Game.BuildBattle, Timeframe.Monthly> {
+    id: Game.BuildBattle;
     level: number;
 
     total_ratings: number;
@@ -27,13 +27,13 @@ export interface Processed_JustBuild_MonthlyStatistics
 }
 
 export function processAllTime_BUILD(
-    statistics: Partial<Statistics<Game.JustBuild, Timeframe.AllTime>>
-): Processed_JustBuild_AllTimeStatistics | null {
+    statistics: Partial<Statistics<Game.BuildBattle, Timeframe.AllTime>>
+): Processed_BuildBattle_AllTimeStatistics | null {
     if (!statistics || Array.isArray(statistics)) return null;
     return {
         UUID: statistics.UUID!,
 
-        ...processGameAndXP(Game.JustBuild, statistics.xp),
+        ...processGameAndXP(Game.BuildBattle, statistics.xp),
         ...processPlayedAndVictories(statistics.played, statistics.victories),
         ...processBuildRatings(
             statistics.rating_love_received,
@@ -48,8 +48,8 @@ export function processAllTime_BUILD(
 }
 
 export function processMonthly_BUILD(
-    statistics: Partial<Statistics<Game.JustBuild, Timeframe.Monthly>>
-): Processed_JustBuild_MonthlyStatistics | null {
+    statistics: Partial<Statistics<Game.BuildBattle, Timeframe.Monthly>>
+): Processed_BuildBattle_MonthlyStatistics | null {
     if (!statistics || Array.isArray(statistics)) return null;
     let index = statistics.index ?? 0;
 
@@ -58,7 +58,7 @@ export function processMonthly_BUILD(
         human_index: index + 1,
         username: statistics.username!,
 
-        ...processGameAndXP(Game.JustBuild, statistics.xp),
+        ...processGameAndXP(Game.BuildBattle, statistics.xp),
         ...processPlayedAndVictories(statistics.played, statistics.victories),
         ...processBuildRatings(
             statistics.rating_love_received,
