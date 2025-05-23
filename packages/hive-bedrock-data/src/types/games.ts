@@ -10,7 +10,7 @@ export enum Game {
     CaptureTheFlag = "ctf",
     BlockDrop = "drop",
     GroundWars = "ground",
-    JustBuild = "build",
+    BuildBattle = "build",
     BlockParty = "party",
     TheBridge = "bridge",
     Gravity = "grav",

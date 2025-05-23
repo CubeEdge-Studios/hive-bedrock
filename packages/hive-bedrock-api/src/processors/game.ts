@@ -107,7 +107,7 @@ export interface ProcessedGameGROUND {
     projectiles_fired: number;
 }
 export interface ProcessedGameBUILD {
-    id: Game.JustBuild;
+    id: Game.BuildBattle;
     xp: number;
 
     played: number;
@@ -286,7 +286,7 @@ export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.DeathRun]: ProcessedGameDR & AdditionalStatistics<T, L>;
     [Game.Gravity]: ProcessedGameGRAV & AdditionalStatistics<T, L>;
     [Game.GroundWars]: ProcessedGameGROUND & AdditionalStatistics<T, L>;
-    [Game.JustBuild]: ProcessedGameBUILD & AdditionalStatistics<T, L>;
+    [Game.BuildBattle]: ProcessedGameBUILD & AdditionalStatistics<T, L>;
     [Game.HideAndSeek]: ProcessedGameHIDE & AdditionalStatistics<T, L>;
     [Game.MurderMystery]: ProcessedGameMURDER & AdditionalStatistics<T, L>;
     [Game.SkyWars]: ProcessedGameSKY & AdditionalStatistics<T, L>;
@@ -427,8 +427,8 @@ export const processors = {
         blocks_placed: response.blocks_placed ?? 0,
         projectiles_fired: response.projectiles_fired ?? 0,
     }),
-    [Game.JustBuild]: (response: any): ProcessedGameBUILD => ({
-        id: Game.JustBuild,
+    [Game.BuildBattle]: (response: any): ProcessedGameBUILD => ({
+        id: Game.BuildBattle,
         xp: response.xp ?? 0,
 
         played: response.played ?? 0,

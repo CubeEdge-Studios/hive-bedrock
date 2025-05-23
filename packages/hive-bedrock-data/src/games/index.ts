@@ -28,7 +28,7 @@ export const Games = {
     [Game.Gravity]: grav,
     [Game.GroundWars]: ground,
     [Game.HideAndSeek]: hide,
-    [Game.JustBuild]: build,
+    [Game.BuildBattle]: build,
     [Game.MurderMystery]: murder,
     [Game.SkyWars]: sky,
     [Game.SkyWarsClassic]: skyClassic,

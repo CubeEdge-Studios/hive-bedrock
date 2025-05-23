@@ -2,9 +2,9 @@ import { IMAGE_CDN } from ".";
 import { Game, GameData } from "../types/games";
 
 export default {
-    id: Game.JustBuild,
+    id: Game.BuildBattle,
     short_name: "BUILD",
-    name: "Just Build",
+    name: "Build Battle",
 
     discontinued: false,
 
@@ -14,8 +14,8 @@ export default {
     colour: "#ae4009",
 
     levelling: {
-        max_level: 20,
+        max_level: 30,
         increment: 100,
         cap: null,
     },
-} satisfies GameData<Game.JustBuild>;
+} satisfies GameData<Game.BuildBattle>;
