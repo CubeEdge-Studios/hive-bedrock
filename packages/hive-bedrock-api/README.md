@@ -3,7 +3,7 @@
 An API wrapper for the Hive Minecraft Bedrock Edition server. Which allows you to get stats for leaderboards, players, cosmetics, unique player counts, maps and metadata.
 
 > [!NOTE]
-> This API responses returnded from this package will differ from the responses returned by the offical Hive API. This due to our preference and needs when using this package on [Hive Backpack](https://hivebackpack.com).
+> This API responses returned from this package will differ from the responses returned by the official Hive API. This due to our preference and needs when using this package on [Hive Backpack](https://hivebackpack.com).
 
 ## Getting started
 
@@ -16,7 +16,7 @@ You should also include `hive-bedrock-data` as it includes useful functions and 
 
 ## Usage
 
-To start using this API wrapper you may construct the main class `HiveAPI`. This class can take in seperate options that will be used in every http request.
+To start using the API, construct the main class `HiveAPI`. This class takes in options that will be used in every HTTP request.
 
 ```ts
 const api = new HiveAPI({

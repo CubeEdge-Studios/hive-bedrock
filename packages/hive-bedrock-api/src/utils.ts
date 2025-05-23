@@ -5,7 +5,6 @@ export interface MethodResponseError {
 
 export type MethodResponse<D extends any> = {
     meta?: {
-        /** sss */
         duration: number;
         ratelimit?: {
             limit: number;
