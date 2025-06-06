@@ -16,6 +16,7 @@ export enum PlayerRank {
     StaffManager = "STAFF_MANAGER",
     CommunityManager = "COMMUNITY_MANAGER",
     Owner = "OWNER",
+    Ultimate = "ULTIMATE",
 }
 
 export enum MapSeason {
