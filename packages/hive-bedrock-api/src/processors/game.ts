@@ -147,7 +147,7 @@ export interface ProcessedGameMURDER {
 
     murders: number;
     deaths: number;
-    kdr: number;
+    edr: number;
 
     coins: number;
     murderer_eliminations: number;
@@ -276,7 +276,7 @@ export interface ProcessedGamePARKOUR {
 }
 export type AdditionalStatistics<T extends Timeframe, L extends boolean> = (T extends Timeframe.AllTime
     ? { level: number } & (L extends true ? {} : { first_played: number })
-    : {}) &
+    : { position: number; username: string }) &
     (L extends true ? { position: number; username: string; UUID: string } : {});
 export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.BedWars]: ProcessedGameBED & AdditionalStatistics<T, L>;
@@ -314,8 +314,8 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
 
     if (timeframe === Timeframe.AllTime && "xp" in data) (data as any).level = calculateLevelFromXP(data.xp, game) ?? 1;
     if (timeframe === Timeframe.AllTime && "first_played" in response) (data as any).first_played = response.first_played;
-    if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
-    if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).username = response.username;
+    if ((isLeaderboard || timeframe === Timeframe.Monthly) && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
+    if ((isLeaderboard || timeframe === Timeframe.Monthly) && data.id !== Game.ParkourWorlds) (data as any).username = response.username;
     if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).UUID = response.UUID;
 
     return data;
@@ -475,7 +475,7 @@ export const processors = {
 
         murders: response.murders ?? 0,
         deaths: response.deaths ?? 0,
-        kdr: calculateKDR(response.murders, response.deaths),
+        edr: calculateKDR(response.murderer_eliminations, response.deaths),
 
         coins: response.coins ?? 0,
         murderer_eliminations: response.murderer_eliminations ?? 0,

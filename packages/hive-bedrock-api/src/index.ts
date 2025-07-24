@@ -16,7 +16,7 @@ interface Options {
 }
 
 export default class HiveAPI {
-    constructor(public options: Options) {
+    constructor(public options: Options = {}) {
         this.options = options;
         this.options.apiBaseEndpoint = this.options.apiBaseEndpoint ?? API_BASE_ENDPOINT;
     }
@@ -99,7 +99,7 @@ export default class HiveAPI {
         identifier: string,
         timeframe: Timeframe.Monthly,
         options?: { month?: number; year?: number }
-    ): Promise<MethodResponse<ProcessedAllGamesResponse>>;
+    ): Promise<MethodResponse<ProcessedMonthlyGamesResponse>>;
     public async getStatistics<G extends Game>(
         identifier: string,
         timeframe: Timeframe.Monthly,
@@ -199,7 +199,7 @@ export default class HiveAPI {
         identifier: string,
         game: G,
         season: number = 1
-    ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G] | null>> {
+    ): Promise<MethodResponse<ProcessedMonthlyGamesResponse["statistics"][G] | null>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/player/${game}/${identifier}/${season}`);
         if (error) return { data: null, error, meta };
         let data = processGame(game, Timeframe.Monthly, true, response);
