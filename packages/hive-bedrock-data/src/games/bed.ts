@@ -12,7 +12,7 @@ export default {
     colour: "#894233",
 
     levelling: {
-        max_level: 75,
+        max_level: 100,
         increment: 150,
         cap: 52,
     },
