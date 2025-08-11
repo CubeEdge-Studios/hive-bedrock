@@ -295,7 +295,7 @@ export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.SurvivalGames]: ProcessedGameSG & AdditionalStatistics<T, L>;
     [Game.TheBridge]: ProcessedGameBRIDGE & AdditionalStatistics<T, L>;
     [Game.TreasureWars]: ProcessedGameWARS & AdditionalStatistics<T, L>;
-    [Game.ParkourWorlds]: L extends true ? never : T extends Timeframe.Monthly ? never : ProcessedGamePARKOUR;
+    [Game.ParkourWorlds]: L extends true ? never : T extends Timeframe.AllTime ? ProcessedGamePARKOUR : never;
 }
 
 export default function processGame<G extends Game, T extends Timeframe, L extends boolean>(
@@ -310,12 +310,12 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
 
     let data = processors[game](response) as ProcessedGame<T, L>[G];
     if (!data) return null;
-    if ("played" in data && data.played === 0) return null;
+    if ("xp" in data && data.xp === 0) return null;
 
     if (timeframe === Timeframe.AllTime && "xp" in data) (data as any).level = calculateLevelFromXP(data.xp, game) ?? 1;
     if (timeframe === Timeframe.AllTime && "first_played" in response) (data as any).first_played = response.first_played;
-    if ((isLeaderboard || timeframe === Timeframe.Monthly) && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
-    if ((isLeaderboard || timeframe === Timeframe.Monthly) && data.id !== Game.ParkourWorlds) (data as any).username = response.username;
+    if ((isLeaderboard || timeframe !== Timeframe.AllTime) && data.id !== Game.ParkourWorlds) (data as any).position = response.human_index;
+    if ((isLeaderboard || timeframe !== Timeframe.AllTime) && data.id !== Game.ParkourWorlds) (data as any).username = response.username;
     if (isLeaderboard && data.id !== Game.ParkourWorlds) (data as any).UUID = response.UUID;
 
     return data;

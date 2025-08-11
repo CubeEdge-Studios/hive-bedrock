@@ -105,10 +105,18 @@ export default class HiveAPI {
         timeframe: Timeframe.Monthly,
         options: { game: G; month?: number; year?: number }
     ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, false>[G]>>;
-    public async getStatistics(identifier: string, timeframe: Timeframe, options?: { game?: Game; month?: number; year?: number }) {
+    public async getStatistics<G extends Game>(
+        identifier: string,
+        timeframe: Timeframe.Seasonal,
+        options: { game: G; season: number }
+    ): Promise<MethodResponse<ProcessedMonthlyGamesResponse>>;
+    public async getStatistics(identifier: string, timeframe: Timeframe, options?: { game?: Game; month?: number; year?: number; season?: number }) {
         if (timeframe === Timeframe.AllTime) {
             if (options?.game) return this._getStatisticsAllTime(identifier, options.game);
             return this._getStatisticsAllTime(identifier);
+        } else if (timeframe === Timeframe.Seasonal) {
+            if (!options?.game) throw new Error("Game must be specified for seasonal statistics");
+            return this._getStatisticsSeasonal(identifier, options?.game, options?.season || 1);
         }
 
         if (options?.game) return this._getStatisticsMonthly(identifier, options.game, options.month, options.year);
@@ -181,6 +189,21 @@ export default class HiveAPI {
             meta,
         };
     }
+    // /game/season/player/{game}/{player}/{season}
+    private async _getStatisticsSeasonal<G extends Game>(
+        identifier: string,
+        game: G,
+        season?: number
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Seasonal, false>[G] | null>>;
+    private async _getStatisticsSeasonal<G extends Game>(
+        identifier: string,
+        game: G,
+        season?: number
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Seasonal, false>[G] | null>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/player/${game}/${identifier}/${season ?? 1}`);
+        if (error) return { data: null, error, meta };
+        return { data: processGame(game, Timeframe.Seasonal, false, response), error: null, meta };
+    }
 
     public async getAvailableMonthlyLeaderboards<G extends Game>(game: G): Promise<MethodResponse<AvailableLeaderboardResponse>> {
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/monthly/${game}/available`);
@@ -225,13 +248,19 @@ export default class HiveAPI {
         game: G,
         options: { month?: number; year?: number }
     ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][] | null>>;
+    public async getLeaderboard<G extends Game>(
+        timeframe: Timeframe.Seasonal,
+        game: G,
+        options: { season: number }
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Seasonal, true>[G][] | null>>;
     public async getLeaderboard<T extends Timeframe, G extends Game>(
         timeframe: T,
         game: G,
-        options?: { month?: number; year?: number }
+        options?: { month?: number; year?: number; season?: number }
     ): Promise<MethodResponse<ProcessedGame<Timeframe, true>[G][] | null>> {
         if (timeframe === Timeframe.Monthly)
             return this._getLeaderboardMonthly(game, options?.month || new Date().getMonth() + 1, options?.year || new Date().getFullYear());
+        if (timeframe === Timeframe.Seasonal) return this._getLeaderboardSeasonal(game, options?.season || 1);
         return this._getLeaderboardAllTime(game);
     }
     // /game/all/{game}
@@ -252,6 +281,17 @@ export default class HiveAPI {
         let data = response.map((res: any) => processGame(game, Timeframe.Monthly, true, res));
         return { data, error: null, meta };
     }
+    // /game/season/{game}/season
+    private async _getLeaderboardSeasonal<G extends Game>(
+        game: G,
+        season: number = 1
+    ): Promise<MethodResponse<ProcessedGame<Timeframe.Seasonal, true>[G][] | null>> {
+        const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/${game}/${season}`);
+        if (error) return { data: null, error, meta };
+        let data = response.map((res: any) => processGame(game, Timeframe.Seasonal, true, res));
+        return { data, error: null, meta };
+    }
+
     /**
      * `/game/season/{game}/{season}` Gets seasonal statistics for a game
      * @param game The game to get the statistics for

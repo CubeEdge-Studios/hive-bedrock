@@ -1,6 +1,7 @@
 export enum Timeframe {
     AllTime = "all",
     Monthly = "monthly",
+    Seasonal = "season",
 }
 
 export enum PlayerRank {
