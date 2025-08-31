@@ -5,7 +5,7 @@ import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistic
 import { ProcessedMapResponse } from "./processors/map";
 import { ProcessedGameMetadata } from "./processors/meta";
 import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
-import processGame, { AvailableLeaderboardResponse, ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game";
+import { processGame, AvailableLeaderboardResponse, ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game";
 
 interface Options {
     resolveDynamicTitles?: boolean;

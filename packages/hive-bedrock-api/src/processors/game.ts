@@ -298,7 +298,7 @@ export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.ParkourWorlds]: L extends true ? never : T extends Timeframe.AllTime ? ProcessedGamePARKOUR : never;
 }
 
-export default function processGame<G extends Game, T extends Timeframe, L extends boolean>(
+export function processGame<G extends Game, T extends Timeframe, L extends boolean>(
     game: G,
     timeframe: T,
     isLeaderboard: L,
