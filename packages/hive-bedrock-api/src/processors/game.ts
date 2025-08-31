@@ -321,8 +321,7 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
 
     return data;
 }
-
-export const processors = {
+const processors = {
     [Game.BedWars]: (response: any): ProcessedGameBED => ({
         id: Game.BedWars,
         xp: response.xp ?? 0,
@@ -616,29 +615,29 @@ export const processors = {
             : null,
 };
 
-export function validateNumber(value: number, def: number = 0): number {
+function validateNumber(value: number, def: number = 0): number {
     if (isNaN(value) || !isFinite(value)) return def;
     return value ?? def;
 }
-export function calculateKDR(kills: number, deaths: number): number {
+function calculateKDR(kills: number, deaths: number): number {
     if (deaths === 0) return validateNumber(kills ?? 0);
     return roundTo(validateNumber((kills ?? 0) / (deaths ?? 0)), 2);
 }
-export function calculateWinPercentage(victories: number, played: number): number {
+function calculateWinPercentage(victories: number, played: number): number {
     if (victories === 0 && played === 0) return 0;
     return validateNumber((victories ?? 0) / (played ?? 0));
 }
-export function calculateLosses(played: number, victories: number): number {
+function calculateLosses(played: number, victories: number): number {
     return validateNumber((played ?? 0) - (victories ?? 0));
 }
-export function calculateTotal(values: number[]): number {
+function calculateTotal(values: number[]): number {
     return validateNumber(values.reduce((a, b) => (a ?? 0) + (b ?? 0), 0));
 }
-export function calculateKPG(kills: number, games: number): number {
+function calculateKPG(kills: number, games: number): number {
     if (games === 0) return validateNumber(kills ?? 0);
     return roundTo(validateNumber((kills ?? 0) / (games ?? 0)), 2);
 }
-export function roundTo(value: number, places: number = 2): number {
+function roundTo(value: number, places: number = 2): number {
     return validateNumber(Number(value.toFixed(places)));
 }
 
