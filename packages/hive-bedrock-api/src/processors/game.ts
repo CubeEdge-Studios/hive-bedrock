@@ -134,7 +134,7 @@ export interface ProcessedGameHIDE {
     deaths: number;
     hider_kills: number;
     seeker_kills: number;
-    kdr: number;
+    kpg: number;
 }
 export interface ProcessedGameMURDER {
     id: Game.MurderMystery;
@@ -310,7 +310,8 @@ export default function processGame<G extends Game, T extends Timeframe, L exten
 
     let data = processors[game](response) as ProcessedGame<T, L>[G];
     if (!data) return null;
-    if ("xp" in data && data.xp === 0) return null;
+
+    if ("played" in data && data.played === 0 && "xp" in data && data.xp === 0) return null;
 
     if (timeframe === Timeframe.AllTime && "xp" in data) (data as any).level = calculateLevelFromXP(data.xp, game) ?? 1;
     if (timeframe === Timeframe.AllTime && "first_played" in response) (data as any).first_played = response.first_played;
@@ -460,7 +461,7 @@ export const processors = {
 
         deaths: response.deaths ?? 0,
         hider_kills: response.hider_kills ?? 0,
-        kdr: calculateKDR(response.hider_kills, response.deaths),
+        kpg: calculateKPG(response.hider_kills, response.played),
 
         seeker_kills: response.seeker_kills ?? 0,
     }),
@@ -632,6 +633,10 @@ export function calculateLosses(played: number, victories: number): number {
 }
 export function calculateTotal(values: number[]): number {
     return validateNumber(values.reduce((a, b) => (a ?? 0) + (b ?? 0), 0));
+}
+export function calculateKPG(kills: number, games: number): number {
+    if (games === 0) return validateNumber(kills ?? 0);
+    return roundTo(validateNumber((kills ?? 0) / (games ?? 0)), 2);
 }
 export function roundTo(value: number, places: number = 2): number {
     return validateNumber(Number(value.toFixed(places)));
