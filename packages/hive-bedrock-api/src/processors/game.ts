@@ -16,6 +16,8 @@ export interface ProcessedGameBED {
 
     final_kills: number;
     beds_destroyed: number;
+
+    prestige: number;
 }
 export interface ProcessedGameDROP {
     id: Game.BlockDrop;
@@ -337,6 +339,7 @@ const processors = {
 
         final_kills: response.final_kills ?? 0,
         beds_destroyed: response.beds_destroyed ?? 0,
+        prestige: response.prestige ?? 0,
     }),
     [Game.BlockDrop]: (response: any): ProcessedGameDROP => ({
         id: Game.BlockDrop,
