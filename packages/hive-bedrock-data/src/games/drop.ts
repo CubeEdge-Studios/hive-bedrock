@@ -6,6 +6,8 @@ export default {
     short_name: "DROP",
     name: "Block Drop",
 
+    statistics: true,
+
     description:
         "Competitive parkour. Be the last player standing in a disintegrating arena.",
     icon_url: IMAGE_CDN + "/icons/hub/games/drop.png",

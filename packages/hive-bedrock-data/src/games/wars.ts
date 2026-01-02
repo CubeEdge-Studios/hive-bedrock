@@ -7,6 +7,7 @@ export default {
     name: "Treasure Wars",
 
     discontinued: true,
+    statistics: true,
 
     description:
         "Bedwars with treasure, Treasures grant infinite respawns. Protect your treasure and destroy others.",

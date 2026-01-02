@@ -16,6 +16,8 @@ export enum Game {
     Gravity = "grav",
     BedWars = "bed",
     ParkourWorlds = "parkour",
+    GhostInvasion = "gi",
+    MobGame = "mob",
 }
 
 export interface GameData<G extends Game> {
@@ -23,6 +25,7 @@ export interface GameData<G extends Game> {
     short_name: string;
     name: string;
 
+    statistics?: boolean;
     discontinued?: boolean;
     variant?: Game;
 

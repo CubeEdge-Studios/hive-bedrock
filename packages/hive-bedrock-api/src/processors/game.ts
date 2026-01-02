@@ -298,6 +298,8 @@ export interface ProcessedGame<T extends Timeframe, L extends boolean> {
     [Game.TheBridge]: ProcessedGameBRIDGE & AdditionalStatistics<T, L>;
     [Game.TreasureWars]: ProcessedGameWARS & AdditionalStatistics<T, L>;
     [Game.ParkourWorlds]: L extends true ? never : T extends Timeframe.AllTime ? ProcessedGamePARKOUR : never;
+    [Game.MobGame]: never;
+    [Game.GhostInvasion]: never;
 }
 
 export function processGame<G extends Game, T extends Timeframe, L extends boolean>(
@@ -616,6 +618,8 @@ const processors = {
                   total_stars: response.parkours.total_stars ?? 0,
               }
             : null,
+    [Game.GhostInvasion]: (_: any): null => null,
+    [Game.MobGame]: (_: any): null => null,
 };
 
 function validateNumber(value: number, def: number = 0): number {

@@ -6,6 +6,8 @@ export default {
     short_name: "MURDER",
     name: "Murder Mystery",
 
+    statistics: true,
+
     description:
         "There is a murderer among you. Find the murderer, or be the murderer.",
     icon_url: IMAGE_CDN + "/icons/hub/games/murder.png",

@@ -8,6 +8,7 @@ export default {
 
     variant: Game.SkyWars,
     discontinued: true,
+    statistics: true,
 
     description: "No lucky ores. Loot chests to collect items.",
     icon_url: IMAGE_CDN + "/icons/hub/games/sky.png",

@@ -2,6 +2,7 @@ export interface ProcessedPlayerResponse {
     info: {
         uuid: string;
         xuid: string;
+        mcid: string;
         username: string;
         rank: string;
         first_played: number;
@@ -69,6 +70,7 @@ export default function processPlayerInfo(playerResponse: any): ProcessedPlayerR
     const info = {
         uuid: player.UUID,
         xuid: player.xuid.toString(),
+        mcid: player.mcid,
         username: player.username_cc,
         rank: player.rank,
         first_played: player.first_played,

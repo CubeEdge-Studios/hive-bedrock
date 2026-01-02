@@ -6,6 +6,8 @@ export default {
     short_name: "DR",
     name: "Deathrun",
 
+    statistics: true,
+
     description:
         "Race through parkour maps, avoiding the obstacles being activated by deaths.",
     icon_url: IMAGE_CDN + "/icons/hub/games/dr.png",

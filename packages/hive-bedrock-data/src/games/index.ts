@@ -19,6 +19,8 @@ import bed from "./bed";
 import parkour from "./parkour";
 import skyKits from "./sky-kits";
 import skyClassic from "./sky-classic";
+import gi from "./gi";
+import mob from "./mob";
 
 export const Games = {
     [Game.BlockDrop]: drop,
@@ -38,4 +40,6 @@ export const Games = {
     [Game.TreasureWars]: wars,
     [Game.BedWars]: bed,
     [Game.ParkourWorlds]: parkour,
+    [Game.MobGame]: mob,
+    [Game.GhostInvasion]: gi,
 } as { [G in Game]: GameData<G> };

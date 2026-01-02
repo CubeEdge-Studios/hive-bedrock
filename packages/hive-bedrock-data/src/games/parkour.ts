@@ -6,6 +6,8 @@ export default {
     short_name: "PARKOUR",
     name: "Parkour Worlds",
 
+    statistics: true,
+
     description:
         "An epic hub filled with fun parkours! Collect stars to unlock new worlds.",
     icon_url: IMAGE_CDN + "/icons/hub/games/hub-parkour.png",

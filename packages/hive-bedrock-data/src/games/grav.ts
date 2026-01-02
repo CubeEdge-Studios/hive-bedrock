@@ -6,6 +6,8 @@ export default {
     short_name: "GRAV",
     name: "Gravity",
 
+    statistics: true,
+
     description:
         "The ultimate movement challenge! Can you fall to the bottom safely?",
     icon_url: IMAGE_CDN + "/icons/hub/games/grav.png",

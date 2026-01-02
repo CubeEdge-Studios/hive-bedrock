@@ -6,6 +6,8 @@ export default {
     short_name: "SKY",
     name: "SkyWars",
 
+    statistics: true,
+
     description:
         "Loot chests and mine ores to gain items, then fight! Last team standing wins.",
     icon_url: IMAGE_CDN + "/icons/hub/games/sky.png",

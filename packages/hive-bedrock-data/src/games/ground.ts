@@ -6,6 +6,8 @@ export default {
     short_name: "GROUND",
     name: "Ground Wars",
 
+    statistics: true,
+
     description:
         "Fight for territory control. each kill grants more territory.",
     icon_url: IMAGE_CDN + "/icons/hub/games/ground.png",

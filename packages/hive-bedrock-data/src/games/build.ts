@@ -7,6 +7,7 @@ export default {
     name: "Build Battle",
 
     discontinued: false,
+    statistics: true,
 
     description:
         "Battle it out to create the best build for a randomly chosen theme.",

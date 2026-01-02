@@ -6,6 +6,8 @@ export default {
     short_name: "BRIDGE",
     name: "The Bridge",
 
+    statistics: true,
+
     description: "Bridge to victory in this fast-paced PvP game.",
     icon_url: IMAGE_CDN + "/icons/hub/games/bridge.png",
     colour: "#9f2b33",

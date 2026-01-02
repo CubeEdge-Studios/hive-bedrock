@@ -6,6 +6,8 @@ export default {
     short_name: "PARTY",
     name: "Block Party",
 
+    statistics: true,
+
     description:
         "It's time to dance! Dance your way to the correct color or fall to your death!",
     icon_url: IMAGE_CDN + "/icons/hub/games/party.png",

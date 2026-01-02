@@ -8,6 +8,7 @@ export default {
 
     variant: Game.SkyWars,
     discontinued: true,
+    statistics: true,
 
     description: "Choose between a variety of kits to fight with in SkyWars.",
     icon_url: IMAGE_CDN + "/icons/hub/games/sky-kits.png",

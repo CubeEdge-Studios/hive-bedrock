@@ -6,6 +6,8 @@ export default {
     short_name: "HIDE",
     name: "Hide and Seek",
 
+    statistics: true,
+
     description:
         "Become a Minecraft block and hide from seekers. Found hiders become seekers.",
     icon_url: IMAGE_CDN + "/icons/hub/games/hide.png",

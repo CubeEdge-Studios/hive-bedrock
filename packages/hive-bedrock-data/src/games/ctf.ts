@@ -6,6 +6,8 @@ export default {
     short_name: "CTF",
     name: "Capture The Flag",
 
+    statistics: true,
+
     description: "Capture and defend! Capture the other teams flag to score.",
     icon_url: IMAGE_CDN + "/icons/hub/games/ctf.png",
     colour: "#2aa7d0",

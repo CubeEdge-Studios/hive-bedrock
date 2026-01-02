@@ -6,6 +6,8 @@ export default {
     short_name: "BED",
     name: "BedWars",
 
+    statistics: true,
+
     description:
         "Defend your bed, eliminate others, solo or as a team. Last team standing wins!",
     icon_url: IMAGE_CDN + "/icons/hub/games/bed.png",

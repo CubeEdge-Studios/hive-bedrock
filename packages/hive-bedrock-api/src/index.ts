@@ -1,4 +1,4 @@
-import { API_BASE_ENDPOINT, Game, Timeframe } from "hive-bedrock-data";
+import { API_BASE_ENDPOINT, Game, Games, Timeframe } from "hive-bedrock-data";
 import { MethodResponse } from "./utils";
 import processPlayerInfo, { ProcessedPlayerResponse } from "./processors/player";
 import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics";
@@ -119,10 +119,14 @@ export default class HiveAPI {
     ): Promise<MethodResponse<ProcessedMonthlyGamesResponse>>;
     public async getStatistics(identifier: string, timeframe: Timeframe, options?: { game?: Game; month?: number; year?: number; season?: number }) {
         if (timeframe === Timeframe.AllTime) {
-            if (options?.game) return this._getStatisticsAllTime(identifier, options.game);
+            if (options?.game) {
+                if (!Games[options.game].statistics) throw new Error(`Statistics are not available for the game: ${options.game}`);
+                return this._getStatisticsAllTime(identifier, options.game);
+            }
             return this._getStatisticsAllTime(identifier);
         } else if (timeframe === Timeframe.Seasonal) {
             if (!options?.game) throw new Error("Game must be specified for seasonal statistics");
+            if (!Games[options.game].statistics) throw new Error(`Statistics are not available for the game: ${options.game}`);
             return this._getStatisticsSeasonal(identifier, options?.game, options?.season || 1);
         }
 
@@ -173,6 +177,8 @@ export default class HiveAPI {
         month?: number,
         year?: number
     ): Promise<MethodResponse<ProcessedMonthlyGamesResponse | (ProcessedGame<Timeframe.Monthly, false>[G] | null)>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
+
         const {
             data: response,
             error,
@@ -207,6 +213,7 @@ export default class HiveAPI {
         game: G,
         season?: number
     ): Promise<MethodResponse<ProcessedGame<Timeframe.Seasonal, false>[G] | null>> {
+        if (!Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/player/${game}/${identifier}/${season ?? 1}`);
         if (error) return { data: null, error, meta };
         return { data: processGame(game, Timeframe.Seasonal, false, response), error: null, meta };
@@ -230,6 +237,7 @@ export default class HiveAPI {
         game: G,
         season: number = 1
     ): Promise<MethodResponse<ProcessedMonthlyGamesResponse["statistics"][G] | null>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/player/${game}/${identifier}/${season}`);
         if (error) return { data: null, error, meta };
         let data = processGame(game, Timeframe.Monthly, true, response);
@@ -265,6 +273,7 @@ export default class HiveAPI {
         game: G,
         options?: { month?: number; year?: number; season?: number }
     ): Promise<MethodResponse<ProcessedGame<Timeframe, true>[G][] | null>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         if (timeframe === Timeframe.Monthly)
             return this._getLeaderboardMonthly(game, options?.month || new Date().getMonth() + 1, options?.year || new Date().getFullYear());
         if (timeframe === Timeframe.Seasonal) return this._getLeaderboardSeasonal(game, options?.season || 1);
@@ -283,6 +292,7 @@ export default class HiveAPI {
         month: number,
         year: number
     ): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][] | null>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/monthly/${game}/${year}/${month}`);
         if (error) return { data: null, error, meta };
         let data = response.map((res: any) => processGame(game, Timeframe.Monthly, true, res));
@@ -293,6 +303,7 @@ export default class HiveAPI {
         game: G,
         season: number = 1
     ): Promise<MethodResponse<ProcessedGame<Timeframe.Seasonal, true>[G][] | null>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/${game}/${season}`);
         if (error) return { data: null, error, meta };
         let data = response.map((res: any) => processGame(game, Timeframe.Seasonal, true, res));
@@ -306,6 +317,7 @@ export default class HiveAPI {
      * @returns The seasonal statistics for the game
      */
     public async getSeasonalLeaderboard<G extends Game>(game: G, season: number = 1): Promise<MethodResponse<ProcessedGame<Timeframe.Monthly, true>[G][]>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/season/${game}/${season ?? 1}`);
         if (error) return { data: null, error, meta };
         let data = response.map((res: any) => processGame(game, Timeframe.Monthly, true, res));
@@ -327,6 +339,7 @@ export default class HiveAPI {
      * @returns A list of maps in the game
      */
     public async getGameMaps(game: Game): Promise<MethodResponse<ProcessedMapResponse>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/map/${game}`);
         if (error) return { data: null, error, meta };
         return { data: response, error: null, meta };
@@ -337,6 +350,7 @@ export default class HiveAPI {
      * @returns The metadata for the game
      */
     public async getGameMetadata(game: Game): Promise<MethodResponse<ProcessedGameMetadata>> {
+        if (game && !Games[game].statistics) throw new Error(`Statistics are not available for the game: ${game}`);
         const { data: response, error, meta } = await this._fetchAPI<any>(`/game/meta/${game}`);
         if (error) return { data: null, error, meta };
         return { data: response, error: null, meta };
