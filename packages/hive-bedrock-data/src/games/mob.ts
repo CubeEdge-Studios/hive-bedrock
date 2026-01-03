@@ -12,7 +12,7 @@ export default {
     description:
         "Become iconic Minecraft mobs and inherit their unique characteristics! Each mob comes with its own special abilities, movement speed, and more.",
     icon_url: IMAGE_CDN + "/icons/hub/games/mob.png",
-    colour: "#1f1f1f",
+    colour: "#035a61",
 
     levelling: {
         max_level: 20,
