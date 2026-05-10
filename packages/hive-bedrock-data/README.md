@@ -1,51 +1,29 @@
 # Hive Bedrock Data
 
-A repo to store and calculate data and type definitions from The Hive: Bedrock Edition server. This includes infomation for each game avaliable on the server, helper functions to calulate different game statistic infomation and type definitions for the public API.
+A repo to store and calculate data and type definitions from The Hive: Bedrock Edition server. This includes infomation for each game avaliable on the server, helper functions to calulate different game statistic infomation.
 
 ## Games
 
 This repo contains metadata infomationm for each game, including content, statistical and game variant infomation.
 
-This is an example of the data return for The Bridge:
+This is an example of the data return for BedWars:
 
 ```ts
-Games[Game.TheBridge] = {
-  id: Game.TheBridge,
-  short_name: "BRIDGE",
-  name: "The Bridge",
+Games[Game.BedWars] = {
+    id: Game.BedWars,
+    short_name: "BED",
+    name: "BedWars",
 
-  description: "Bridge to victory in this fast-paced PvP game.",
-  icon_url: IMAGE_CDN + "/icons/hub/games/bridge.png",
+    description:
+        "Defend your bed, eliminate others, solo or as a team. Last team standing wins!",
+    icon_url: IMAGE_CDN + "/icons/hub/games/bed.png",
+    colour: "#894233",
 
-  max_level: 20,
-  can_prestige: false,
-  max_prestige: null,
-  level_increment: 300,
-  level_cap: null,
-  level_multiplier: 1.08,
-
-  colours: ["#7a4b4f", "#d05548", "#1a90d6", "#0d5196", "#8f9e9e"],
-
-  modes: [
-    {
-      id: "bridge",
-      type: Game_Variant_Type.Regular,
-      name: "Solos",
-      team_size: 1,
-      team_amount: 2,
-      limited: false,
-      queue_type: Game_Variant_Queue_Type.Deafult,
+    levelling: {
+        max_level: 50,
+        increment: 150,
+        cap: null,
     },
-    {
-      id: "bridge-duos",
-      type: Game_Variant_Type.Duos,
-      name: "Duos",
-      team_size: 2,
-      team_amount: 2,
-      limited: false,
-      queue_type: Game_Variant_Queue_Type.Default,
-    },
-  ],
 };
 ```
 
@@ -71,12 +49,4 @@ function calculateLevelXP(level: number, game_id: Game): number | null;
 
 // calculates if a player has reached max level given a xp amount and game_id
 function hasCompleted(xp: number, game_id: Game): boolean;
-```
-
-## API Type Definitions
-
-This repo has type definitions for the different routes on the public api.
-
-```ts
-Routes<"/game/all/sky"> = Response_AllTimeLeaderboard<Game.SkyWars>;
 ```
