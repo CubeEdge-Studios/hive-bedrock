@@ -1,6 +1,6 @@
-import { Games } from "../games";
-import { Game } from "../types/games";
-import calculateLevelFromXP from "./calculateLevelFromXP";
+import { Games } from "../games/index.js";
+import { Game } from "../types/games.js";
+import calculateLevelFromXP from "./calculateLevelFromXP.js";
 
 export default function hasCompleted(xp: number, game_id: Game): boolean {
     const metadata = Games[game_id];

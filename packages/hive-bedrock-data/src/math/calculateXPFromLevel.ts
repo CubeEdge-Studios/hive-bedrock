@@ -1,9 +1,9 @@
-import { Games } from "../games";
-import { Game } from "../types/games";
+import { Games } from "../games/index.js";
+import { Game } from "../types/games.js";
 
 export default function calculateXPFromLevel(
     level: number,
-    game_id: Game
+    game_id: Game,
 ): number | null {
     const metadata = Games[game_id];
     if (!metadata || !metadata.levelling) return null;

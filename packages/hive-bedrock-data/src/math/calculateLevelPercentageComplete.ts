@@ -1,12 +1,12 @@
-import { Games } from "../games";
-import { Game } from "../types/games";
-import calculateLevelFromXP from "./calculateLevelFromXP";
-import calculateXPFromLevel from "./calculateXPFromLevel";
-import calculateLevelXP from "./calculateLevelXP";
+import { Games } from "../games/index.js";
+import { Game } from "../types/games.js";
+import calculateLevelFromXP from "./calculateLevelFromXP.js";
+import calculateXPFromLevel from "./calculateXPFromLevel.js";
+import calculateLevelXP from "./calculateLevelXP.js";
 
 export default function calculateLevelPercentageComplete(
     xp: number,
-    game_id: Game
+    game_id: Game,
 ): number {
     const metadata = Games[game_id];
     if (!metadata || !metadata.levelling) return 0;
@@ -17,7 +17,7 @@ export default function calculateLevelPercentageComplete(
 
     const current_level_xp = calculateXPFromLevel(
         Math.floor(current_level),
-        game_id
+        game_id,
     );
     if (current_level_xp === null) return 0;
 
@@ -25,7 +25,7 @@ export default function calculateLevelPercentageComplete(
 
     const total_level_xp = calculateLevelXP(
         Math.floor(current_level + 1),
-        game_id
+        game_id,
     );
     if (total_level_xp === null) return 0;
 

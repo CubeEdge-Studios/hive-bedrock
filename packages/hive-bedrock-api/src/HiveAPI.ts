@@ -1,11 +1,11 @@
 import { API_BASE_ENDPOINT, Game, Games, Timeframe } from "hive-bedrock-data";
-import { MethodResponse } from "./utils";
-import processPlayerInfo, { ProcessedPlayerResponse } from "./processors/player";
-import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics";
-import { ProcessedMapResponse } from "./processors/map";
-import { ProcessedGameMetadata } from "./processors/meta";
-import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search";
-import { processGame, AvailableLeaderboardResponse, ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game";
+import { MethodResponse } from "./utils.js";
+import processPlayerInfo, { ProcessedPlayerResponse } from "./processors/player.js";
+import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics.js";
+import { ProcessedMapResponse } from "./processors/map.js";
+import { ProcessedGameMetadata } from "./processors/meta.js";
+import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search.js";
+import { processGame, AvailableLeaderboardResponse, ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game.js";
 
 interface Options {
     resolveDynamicTitles?: boolean;

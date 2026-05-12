@@ -1,26 +1,24 @@
-import { Game, GameData } from "../types/games";
+import { Game, GameData } from "../types/games.js";
 
-export const IMAGE_CDN = "https://cdn.playhive.com";
-
-import bridge from "./bridge";
-import build from "./build";
-import ctf from "./ctf";
-import dr from "./dr";
-import drop from "./drop";
-import grav from "./grav";
-import ground from "./ground";
-import hide from "./hide";
-import murder from "./murder";
-import party from "./party";
-import sg from "./sg";
-import sky from "./sky";
-import wars from "./wars";
-import bed from "./bed";
-import parkour from "./parkour";
-import skyKits from "./sky-kits";
-import skyClassic from "./sky-classic";
-import gi from "./gi";
-import mob from "./mob";
+import bridge from "./bridge.js";
+import build from "./build.js";
+import ctf from "./ctf.js";
+import dr from "./dr.js";
+import drop from "./drop.js";
+import grav from "./grav.js";
+import ground from "./ground.js";
+import hide from "./hide.js";
+import murder from "./murder.js";
+import party from "./party.js";
+import sg from "./sg.js";
+import sky from "./sky.js";
+import wars from "./wars.js";
+import bed from "./bed.js";
+import parkour from "./parkour.js";
+import skyKits from "./sky-kits.js";
+import skyClassic from "./sky-classic.js";
+import gi from "./gi.js";
+import mob from "./mob.js";
 
 export const Games = {
     [Game.BlockDrop]: drop,

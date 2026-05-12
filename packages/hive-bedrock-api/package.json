@@ -1,9 +1,16 @@
 {
     "name": "hive-bedrock-api",
     "version": "4.1.1",
+    "type": "module",
     "description": "An API wrapper for the Hive Minecraft Bedrock Edition server.",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/index.js"
+        }
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/CubeEdge-Studios/hive-bedrock.git"
@@ -17,7 +24,7 @@
         "build": "tsc"
     },
     "files": [
-        "lib/**/*"
+        "lib"
     ],
     "devDependencies": {
         "ts-node": "^10.9.1",

@@ -1,5 +1,5 @@
 import { calculateLevelFromXP, Game, Timeframe } from "hive-bedrock-data";
-import { ProcessedPlayerResponse } from "./player";
+import { ProcessedPlayerResponse } from "./player.js";
 
 export interface ProcessedGameBED {
     id: Game.BedWars;
@@ -306,7 +306,7 @@ export function processGame<G extends Game, T extends Timeframe, L extends boole
     game: G,
     timeframe: T,
     isLeaderboard: L,
-    response: any
+    response: any,
 ): ProcessedGame<T, L>[G] | null {
     if (!response) return null;
     if ("index" in response && response.human_index === 2147483647) return null;

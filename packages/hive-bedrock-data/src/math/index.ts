@@ -1,9 +1,9 @@
-import calculateLevelFromXP from "./calculateLevelFromXP";
-import calculateLevelPercentageComplete from "./calculateLevelPercentageComplete";
-import calculateLevelXP from "./calculateLevelXP";
-import calculatePercentageComplete from "./calculatePercentageComplete";
-import calculateXPFromLevel from "./calculateXPFromLevel";
-import hasCompleted from "./hasCompleted";
+import calculateLevelFromXP from "./calculateLevelFromXP.js";
+import calculateLevelPercentageComplete from "./calculateLevelPercentageComplete.js";
+import calculateLevelXP from "./calculateLevelXP.js";
+import calculatePercentageComplete from "./calculatePercentageComplete.js";
+import calculateXPFromLevel from "./calculateXPFromLevel.js";
+import hasCompleted from "./hasCompleted.js";
 
 export {
     calculateLevelFromXP,

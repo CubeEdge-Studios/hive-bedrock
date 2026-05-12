@@ -1,5 +1,5 @@
-import { IMAGE_CDN } from ".";
-import { Game, GameData } from "../types/games";
+import { IMAGE_CDN } from "../api.js";
+import { Game, GameData } from "../types/games.js";
 
 export default {
     id: Game.CaptureTheFlag,
