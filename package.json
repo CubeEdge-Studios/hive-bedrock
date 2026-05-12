@@ -5,7 +5,6 @@
   "license": "MIT",
   "scripts": {
     "build": "lerna run build",
-    "version": "lerna version --no-push",
     "publish": "lerna publish"
   },
   "devDependencies": {
