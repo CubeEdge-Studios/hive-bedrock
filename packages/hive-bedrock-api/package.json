@@ -1,6 +1,6 @@
 {
     "name": "hive-bedrock-api",
-    "version": "4.2.0",
+    "version": "4.3.0",
     "type": "module",
     "description": "An API wrapper for the Hive Minecraft Bedrock Edition server.",
     "main": "lib/index.js",
