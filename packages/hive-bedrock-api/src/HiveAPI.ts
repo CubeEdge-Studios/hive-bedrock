@@ -94,7 +94,11 @@ export default class HiveAPI {
      * @param options Additional options including specific game, month, and year
      * @returns The player statistics
      */
-    public async getStatistics(identifier: string, timeframe: Timeframe.AllTime): Promise<MethodResponse<ProcessedAllGamesResponse>>;
+    public async getStatistics(
+        identifier: string,
+        timeframe: Timeframe.AllTime,
+        options?: Partial<MethodOptions>,
+    ): Promise<MethodResponse<ProcessedAllGamesResponse>>;
     public async getStatistics(
         identifier: string,
         timeframe: Timeframe.Monthly,
