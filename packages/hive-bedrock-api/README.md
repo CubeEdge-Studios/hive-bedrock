@@ -40,7 +40,7 @@ const { data, error, meta } = await api.getPlayer("player");
 const { data, error, meta } = await api.getPlayerSearch("prefix");
 ```
 
-### Fetch All-Time/Monthly Player Statistics
+### Fetch All-Time/Monthly/Seasonal Player Statistics
 
 ```ts
 import { Timeframe, Game } from "hive-bedrock-data";
@@ -49,18 +49,8 @@ import { Timeframe, Game } from "hive-bedrock-data";
 const { data, error, meta } = await api.getStatistics("player", Timeframe.AllTime);
 // Returns all monthly games
 const { data, error, meta } = await api.getStatistics("player", Timeframe.Monthly);
-
-// Add in options a game to return a single game
-const { data, error, meta } = await api.getStatistics("player", Timeframe.AllTime, { game: Game.BedWars });
-```
-
-### Fetch Seasonal Player Statistics
-
-```ts
-import { Game } from "hive-bedrock-data";
-
-// Returns seasonal statistics for a game
-const { data, error, meta } = await api.getSeasonalStatistics("player", Game.BedWars, 1);
+// Returns seasonal game
+const { data, error, meta } = await api.getStatistics("player", Timeframe.Seasonal);
 ```
 
 ### Fetch All-Time/Monthly Leaderboard
@@ -72,18 +62,8 @@ import { Timeframe, Game } from "hive-bedrock-data";
 const { data, error, meta } = await api.getLeaderboard(Timeframe.AllTime, Game.SkyWars);
 // Returns monthly leaderboard
 const { data, error, meta } = await api.getLeaderboard(Timeframe.Monthly, Game.SkyWars);
-
-// Add in options the month and year for a specific leaderboard
-const { data, error, meta } = await api.getLeaderboard(Timeframe.Monthly, { month: 11, year: 2024 });
-```
-
-### Fetch Seasonal Leaderboard
-
-```ts
-import { Game } from "hive-bedrock-data";
-
-// Returns seasonal leaderboard for a game
-const { data, error, meta } = await api.getSeasonalLeaderboard(Game.BedWars, 1);
+// Returns seasonal leaderboard
+const { data, error, meta } = await api.getLeaderboard(Timeframe.Seasonal, Game.BedWars);
 ```
 
 ### Fetch Global Statistics
