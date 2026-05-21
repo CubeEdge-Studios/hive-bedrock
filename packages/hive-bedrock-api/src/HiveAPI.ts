@@ -7,14 +7,14 @@ import { ProcessedGameMetadata } from "./processors/meta.js";
 import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search.js";
 import { processGame, AvailableLeaderboardResponse, ProcessedAllGamesResponse, ProcessedGame, ProcessedMonthlyGamesResponse } from "./processors/game.js";
 
-interface Options {
+export interface Options {
     resolveDynamicTitles?: boolean;
     useModernLeaderboardSource?: boolean;
 
     apiBaseEndpoint?: string;
     requestInit?: RequestInit;
 }
-interface MethodOptions {
+export interface MethodOptions {
     requestInit?: RequestInit;
 }
 

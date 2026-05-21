@@ -6,6 +6,7 @@ export * from "./processors/map.js";
 export * from "./processors/meta.js";
 export * from "./processors/player.js";
 export * from "./processors/player_search.js";
+export * from "./utils.js";
 
 export { HiveAPI };
 export default HiveAPI;
