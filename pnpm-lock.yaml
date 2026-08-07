@@ -15,8 +15,8 @@ importers:
   packages/hive-bedrock-api:
     dependencies:
       hive-bedrock-data:
-        specifier: ^4.4.1
-        version: 4.4.1
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       ts-node:
         specifier: ^10.9.1
@@ -979,8 +979,8 @@ packages:
     resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
     engines: {node: '>= 0.4'}
 
-  hive-bedrock-data@4.4.1:
-    resolution: {integrity: sha512-uW0q/rkgjYF/yDukA+1FQrULwBHXAnW5Frbb18CAUK9XkjDGHHdJ1fR3z/jqkc2A5mDLXNG/PIUUISyZcJFa9A==}
+  hive-bedrock-data@4.4.3:
+    resolution: {integrity: sha512-ekjpUdhz2qd8xTXwzKtDmlxMsXfHj+jUNXlqw4tX0HzAIbNYg9tGkCfrCOVkQBgU3i5cIlZvix9CbhiqdXmXKQ==}
 
   hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -3212,7 +3212,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hive-bedrock-data@4.4.1: {}
+  hive-bedrock-data@4.4.3: {}
 
   hosted-git-info@2.8.9: {}
 
