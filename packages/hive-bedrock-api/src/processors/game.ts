@@ -13,6 +13,7 @@ export interface ProcessedGameBED {
 	kills: number;
 	deaths: number;
 	kdr: number;
+	fklr: number;
 
 	final_kills: number;
 	beds_destroyed: number;
@@ -172,6 +173,7 @@ export interface ProcessedGameSKY {
 	deaths: number;
 	final_kills: number;
 	kdr: number;
+	fkdr: number;
 
 	mystery_chests_destroyed: number;
 	ores_mined: number;
@@ -190,6 +192,7 @@ export interface ProcessedGameSKYKITS {
 	kills: number;
 	deaths: number;
 	kdr: number;
+	fkdr: number;
 
 	mystery_chests_destroyed: number;
 	ores_mined: number;
@@ -208,6 +211,7 @@ export interface ProcessedGameSKYCLASSIC {
 	kills: number;
 	deaths: number;
 	kdr: number;
+	fkdr: number;
 
 	selected_kit: string;
 }
@@ -258,6 +262,7 @@ export interface ProcessedGameWARS {
 	kills: number;
 	deaths: number;
 	kdr: number;
+	fklr: number;
 
 	final_kills: number;
 	treasure_destroyed: number;
@@ -366,6 +371,10 @@ const processors = {
 		kills: response.kills ?? 0,
 		deaths: response.deaths ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
+		fklr: calculateFKLR(
+			response.final_kills,
+			calculateLosses(response.played, response.victories),
+		),
 
 		final_kills: response.final_kills ?? 0,
 		beds_destroyed: response.beds_destroyed ?? 0,
@@ -530,6 +539,7 @@ const processors = {
 		deaths: response.deaths ?? 0,
 		final_kills: response.final_kills ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
+		fkdr: calculateFKDR(response.final_kills, response.deaths),
 
 		mystery_chests_destroyed: response.mystery_chests_destroyed ?? 0,
 		ores_mined: response.ores_mined ?? 0,
@@ -548,6 +558,7 @@ const processors = {
 		kills: response.kills ?? 0,
 		deaths: response.deaths ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
+		fkdr: calculateFKDR(response.final_kills, response.deaths),
 
 		mystery_chests_destroyed: response.mystery_chests_destroyed ?? 0,
 		ores_mined: response.ores_mined ?? 0,
@@ -566,6 +577,7 @@ const processors = {
 		kills: response.kills ?? 0,
 		deaths: response.deaths ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
+		fkdr: calculateFKDR(response.final_kills, response.deaths),
 
 		selected_kit: response.selected_kit,
 	}),
@@ -625,6 +637,10 @@ const processors = {
 		kills: response.kills ?? 0,
 		deaths: response.deaths ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
+		fklr: calculateFKLR(
+			response.final_kills,
+			calculateLosses(response.played, response.victories),
+		),
 
 		final_kills: response.final_kills ?? 0,
 		treasure_destroyed: response.treasure_destroyed ?? 0,
@@ -678,6 +694,14 @@ function validateNumber(value: number, def: number = 0): number {
 function calculateKDR(kills: number, deaths: number): number {
 	if (deaths === 0) return validateNumber(kills ?? 0);
 	return roundTo(validateNumber((kills ?? 0) / (deaths ?? 0)), 2);
+}
+function calculateFKDR(final_kills: number, deaths: number): number {
+	if (deaths === 0) return validateNumber(final_kills ?? 0);
+	return roundTo(validateNumber((final_kills ?? 0) / (deaths ?? 0)), 2);
+}
+function calculateFKLR(final_kills: number, losses: number): number {
+	if (losses === 0) return validateNumber(final_kills ?? 0);
+	return roundTo(validateNumber((final_kills ?? 0) / (losses ?? 0)), 2);
 }
 function calculateWinPercentage(victories: number, played: number): number {
 	if (victories === 0 && played === 0) return 0;
