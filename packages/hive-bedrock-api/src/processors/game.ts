@@ -192,7 +192,6 @@ export interface ProcessedGameSKYKITS {
 	kills: number;
 	deaths: number;
 	kdr: number;
-	fkdr: number;
 
 	mystery_chests_destroyed: number;
 	ores_mined: number;
@@ -211,7 +210,6 @@ export interface ProcessedGameSKYCLASSIC {
 	kills: number;
 	deaths: number;
 	kdr: number;
-	fkdr: number;
 
 	selected_kit: string;
 }
@@ -558,7 +556,6 @@ const processors = {
 		kills: response.kills ?? 0,
 		deaths: response.deaths ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
-		fkdr: calculateFKDR(response.final_kills, response.deaths),
 
 		mystery_chests_destroyed: response.mystery_chests_destroyed ?? 0,
 		ores_mined: response.ores_mined ?? 0,
@@ -577,7 +574,6 @@ const processors = {
 		kills: response.kills ?? 0,
 		deaths: response.deaths ?? 0,
 		kdr: calculateKDR(response.kills, response.deaths),
-		fkdr: calculateFKDR(response.final_kills, response.deaths),
 
 		selected_kit: response.selected_kit,
 	}),
