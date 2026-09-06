@@ -1,6 +1,6 @@
 {
     "name": "hive-bedrock-api",
-    "version": "4.4.7",
+    "version": "4.4.8",
     "type": "module",
     "description": "An API wrapper for the Hive Minecraft Bedrock Edition server.",
     "main": "lib/index.js",
@@ -18,7 +18,7 @@
     "license": "MIT",
     "author": "Cubeedge Studios",
     "dependencies": {
-        "hive-bedrock-data": "^4.4.4"
+        "hive-bedrock-data": "^4.4.8"
     },
     "scripts": {
         "build": "tsc"
