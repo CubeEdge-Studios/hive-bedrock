@@ -2,21 +2,21 @@ import { IMAGE_CDN } from "../api.js";
 import { Game, GameData } from "../types/games.js";
 
 export default {
-    id: Game.TreasureWars,
-    short_name: "WARS",
-    name: "Treasure Wars",
+  id: Game.TreasureWars,
+  short_name: "WARS",
+  name: "Treasure Wars",
 
-    discontinued: true,
-    statistics: true,
+  discontinued: true,
+  statistics: true,
 
-    description:
-        "Bedwars with treasure, Treasures grant infinite respawns. Protect your treasure and destroy others.",
-    icon_url: IMAGE_CDN + "/icons/hub/games/wars.png",
-    colour: "#ffc626",
+  description:
+    "Bedwars with treasure, Treasures grant infinite respawns. Protect your treasure and destroy others.",
+  icon_url: IMAGE_CDN + "/icons/hub/games/wars.png",
+  colour: "#ffc626",
 
-    levelling: {
-        max_level: 100,
-        increment: 150,
-        cap: 52,
-    },
+  levelling: {
+    max_level: 100,
+    increment: 150,
+    cap: 52,
+  },
 } satisfies GameData<Game.TreasureWars>;

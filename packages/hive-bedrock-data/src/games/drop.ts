@@ -2,20 +2,19 @@ import { IMAGE_CDN } from "../api.js";
 import { Game, GameData } from "../types/games.js";
 
 export default {
-    id: Game.BlockDrop,
-    short_name: "DROP",
-    name: "Block Drop",
+  id: Game.BlockDrop,
+  short_name: "DROP",
+  name: "Block Drop",
 
-    statistics: true,
+  statistics: true,
 
-    description:
-        "Competitive parkour. Be the last player standing in a disintegrating arena.",
-    icon_url: IMAGE_CDN + "/icons/hub/games/drop.png",
-    colour: "#116a2e",
+  description: "Competitive parkour. Be the last player standing in a disintegrating arena.",
+  icon_url: IMAGE_CDN + "/icons/hub/games/drop.png",
+  colour: "#116a2e",
 
-    levelling: {
-        max_level: 25,
-        increment: 150,
-        cap: 22,
-    },
+  levelling: {
+    max_level: 25,
+    increment: 150,
+    cap: 22,
+  },
 } satisfies GameData<Game.BlockDrop>;

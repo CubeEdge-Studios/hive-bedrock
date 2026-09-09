@@ -6,10 +6,10 @@ import calculateXPFromLevel from "./calculateXPFromLevel.js";
 import hasCompleted from "./hasCompleted.js";
 
 export {
-    calculateLevelFromXP,
-    calculateLevelPercentageComplete,
-    calculateLevelXP,
-    calculatePercentageComplete,
-    calculateXPFromLevel,
-    hasCompleted,
+  calculateLevelFromXP,
+  calculateLevelPercentageComplete,
+  calculateLevelXP,
+  calculatePercentageComplete,
+  calculateXPFromLevel,
+  hasCompleted,
 };

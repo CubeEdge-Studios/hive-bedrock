@@ -2,21 +2,20 @@ import { IMAGE_CDN } from "../api.js";
 import { Game, GameData } from "../types/games.js";
 
 export default {
-    id: Game.SkyWars,
-    short_name: "SKY",
-    name: "SkyWars",
+  id: Game.SkyWars,
+  short_name: "SKY",
+  name: "SkyWars",
 
-    statistics: true,
+  statistics: true,
 
-    description:
-        "Loot chests and mine ores to gain items, then fight! Last team standing wins.",
-    icon_url: IMAGE_CDN + "/icons/hub/games/sky.png",
-    colour: "#d6654d",
+  description: "Loot chests and mine ores to gain items, then fight! Last team standing wins.",
+  icon_url: IMAGE_CDN + "/icons/hub/games/sky.png",
+  colour: "#d6654d",
 
-    levelling: {
-        max_level: 100,
-        increment: 150,
-        cap: 52,
-        max_prestige: 5,
-    },
+  levelling: {
+    max_level: 100,
+    increment: 150,
+    cap: 52,
+    max_prestige: 5,
+  },
 } satisfies GameData<Game.SkyWars>;

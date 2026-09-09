@@ -2,20 +2,19 @@ import { IMAGE_CDN } from "../api.js";
 import { Game, GameData } from "../types/games.js";
 
 export default {
-    id: Game.Gravity,
-    short_name: "GRAV",
-    name: "Gravity",
+  id: Game.Gravity,
+  short_name: "GRAV",
+  name: "Gravity",
 
-    statistics: true,
+  statistics: true,
 
-    description:
-        "The ultimate movement challenge! Can you fall to the bottom safely?",
-    icon_url: IMAGE_CDN + "/icons/hub/games/grav.png",
-    colour: "#3D9BA4",
+  description: "The ultimate movement challenge! Can you fall to the bottom safely?",
+  icon_url: IMAGE_CDN + "/icons/hub/games/grav.png",
+  colour: "#3D9BA4",
 
-    levelling: {
-        max_level: 25,
-        increment: 150,
-        cap: null,
-    },
+  levelling: {
+    max_level: 25,
+    increment: 150,
+    cap: null,
+  },
 } satisfies GameData<Game.Gravity>;

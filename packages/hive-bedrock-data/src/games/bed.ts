@@ -2,21 +2,20 @@ import { IMAGE_CDN } from "../api.js";
 import { Game, type GameData } from "../types/games.js";
 
 export default {
-	id: Game.BedWars,
-	short_name: "BED",
-	name: "BedWars",
+  id: Game.BedWars,
+  short_name: "BED",
+  name: "BedWars",
 
-	statistics: true,
+  statistics: true,
 
-	description:
-		"Defend your bed, eliminate others, solo or as a team. Last team standing wins!",
-	icon_url: IMAGE_CDN + "/icons/hub/games/bed.png",
-	colour: "#894233",
+  description: "Defend your bed, eliminate others, solo or as a team. Last team standing wins!",
+  icon_url: IMAGE_CDN + "/icons/hub/games/bed.png",
+  colour: "#894233",
 
-	levelling: {
-		max_level: 100,
-		increment: 150,
-		cap: 52,
-		max_prestige: 2,
-	},
+  levelling: {
+    max_level: 100,
+    increment: 150,
+    cap: 52,
+    max_prestige: 2,
+  },
 } satisfies GameData<Game.BedWars>;

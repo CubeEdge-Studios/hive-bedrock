@@ -2,21 +2,20 @@ import { IMAGE_CDN } from "../api.js";
 import { Game, GameData } from "../types/games.js";
 
 export default {
-    id: Game.BuildBattle,
-    short_name: "BUILD",
-    name: "Build Battle",
+  id: Game.BuildBattle,
+  short_name: "BUILD",
+  name: "Build Battle",
 
-    discontinued: false,
-    statistics: true,
+  discontinued: false,
+  statistics: true,
 
-    description:
-        "Battle it out to create the best build for a randomly chosen theme.",
-    icon_url: IMAGE_CDN + "/icons/hub/games/build.png",
-    colour: "#ae4009",
+  description: "Battle it out to create the best build for a randomly chosen theme.",
+  icon_url: IMAGE_CDN + "/icons/hub/games/build.png",
+  colour: "#ae4009",
 
-    levelling: {
-        max_level: 30,
-        increment: 100,
-        cap: null,
-    },
+  levelling: {
+    max_level: 30,
+    increment: 100,
+    cap: null,
+  },
 } satisfies GameData<Game.BuildBattle>;
