@@ -3,14 +3,29 @@ export interface MethodResponseError {
   message?: string;
 }
 
-export type MethodResponse<D extends any> = {
-  meta?: {
-    duration: number;
-    ratelimit?: {
-      limit: number;
-      remaining: number;
-      reset: number;
-    };
-    retryAfter?: number;
+export type MethodResponseMetadata = {
+  duration: number;
+  ratelimit?: {
+    limit: number;
+    remaining: number;
+    reset: number;
   };
-} & ({ data: D; error: null } | { data: null; error: MethodResponseError });
+  retryAfter?: number;
+};
+
+export type MethodResponseSuccess<D> = {
+  meta?: MethodResponseMetadata;
+  data: D;
+  error: null;
+};
+
+export type MethodResponseFailure = {
+  meta?: MethodResponseMetadata;
+  data: null;
+  error: MethodResponseError;
+};
+
+export type MethodResponse<D> = { meta?: MethodResponseMetadata } & (
+  | MethodResponseSuccess<D>
+  | MethodResponseFailure
+);

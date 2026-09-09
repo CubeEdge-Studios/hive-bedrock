@@ -43,13 +43,35 @@ export enum CosmeticType {
   Mount = "mount",
   Backbling = "backbling",
 }
+export type SimpleHubTitle = { display: string };
+
+export type StatTrackValue = { game: string; placeholder: string } & (
+  | {
+      keys: [string, string];
+      operation: "divide" | "add" | "subtract";
+      style?: "percent" | "dot";
+    }
+  | {
+      key: string;
+    }
+);
+export type StatTrackHubTitle = SimpleHubTitle & {
+  special_type: "stat_track";
+  stat_track: StatTrackValue[];
+};
+export type CombinedStatTrackHubTitle = SimpleHubTitle & {
+  special_type: "combined_stat_track";
+};
+
+export type HubTitle = SimpleHubTitle | StatTrackHubTitle | CombinedStatTrackHubTitle;
+
 export interface CosmeticResponseTypes {
   [CosmeticType.Costume]: string;
   [CosmeticType.Avatar]: {
     name: string;
     url: string;
   };
-  [CosmeticType.HubTitle]: string;
+  [CosmeticType.HubTitle]: HubTitle;
   [CosmeticType.Hat]: {
     name: string;
     icon: string;

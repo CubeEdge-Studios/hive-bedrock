@@ -1,17 +1,20 @@
 import { API_BASE_ENDPOINT, Game, Games, Timeframe } from "hive-bedrock-data";
-import { MethodResponse } from "./utils.js";
-import processPlayerInfo, { ProcessedPlayerResponse } from "./processors/player.js";
-import { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics.js";
-import { ProcessedMapResponse } from "./processors/map.js";
-import { ProcessedGameMetadata } from "./processors/meta.js";
-import processPlayerSearch, { ProcessedPlayerSearchResponse } from "./processors/player_search.js";
+
 import {
+  type AvailableLeaderboardResponse,
+  type ProcessedAllGamesResponse,
+  type ProcessedGame,
+  type ProcessedMonthlyGamesResponse,
   processGame,
-  AvailableLeaderboardResponse,
-  ProcessedAllGamesResponse,
-  ProcessedGame,
-  ProcessedMonthlyGamesResponse,
 } from "./processors/game.js";
+import type { ProcessedGlobalStatisticsResponse } from "./processors/global_statistics.js";
+import type { ProcessedMapResponse } from "./processors/map.js";
+import type { ProcessedGameMetadata } from "./processors/meta.js";
+import processPlayerInfo, { type ProcessedPlayerResponse } from "./processors/player.js";
+import processPlayerSearch, {
+  type ProcessedPlayerSearchResponse,
+} from "./processors/player_search.js";
+import type { MethodResponse, MethodResponseMetadata } from "./utils.js";
 
 export interface Options {
   resolveDynamicTitles?: boolean;
@@ -30,7 +33,7 @@ export default class HiveAPI {
     this.options.apiBaseEndpoint = this.options.apiBaseEndpoint ?? API_BASE_ENDPOINT;
   }
 
-  private async _fetchAPI<R extends any>(
+  private async _fetchAPI<R>(
     endpoint: string,
     requestInit?: RequestInit,
   ): Promise<MethodResponse<R>> {
@@ -46,13 +49,13 @@ export default class HiveAPI {
           "X-Hive-Leaderboard-Source": this.options.useModernLeaderboardSource
             ? "modern"
             : "legacy",
+          "X-Hive-API-Version": "2024-03-29",
           ...this.options.requestInit?.headers,
           ...requestInit?.headers,
         },
       });
-      if (!request.ok) return { data: null, error: { status: request.status } };
 
-      const meta: MethodResponse<any>["meta"] = {
+      const meta: MethodResponseMetadata = {
         duration: Math.ceil(performance.now() - start),
         ratelimit: {
           limit: Number(request.headers.get("X-Ratelimit-Limit")),
@@ -62,10 +65,23 @@ export default class HiveAPI {
         retryAfter: Number(request.headers.get("Retry-After")),
       };
 
+      if (!request.ok)
+        return {
+          data: null,
+          error: { status: request.status, message: request.statusText },
+          meta,
+        };
+
       const response = await request.json();
-      return { data: response, error: null, meta };
+      return { data: response as R, error: null, meta };
     } catch (err) {
-      return { data: null, error: { status: 500, message: (err as any).message } };
+      return {
+        data: null,
+        error: {
+          status: 500,
+          message: (err as Error).message || "Unknown error",
+        },
+      };
     }
   }
 
@@ -82,12 +98,16 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/all/main/${identifier}`, options?.requestInit);
+    } = await this._fetchAPI(`/game/all/main/${identifier}`, options?.requestInit);
     if (error) return { data: null, error, meta };
 
     const data = processPlayerInfo(response);
     if (!data)
-      return { data: null, error: { status: 500, message: "Failed to process player data" }, meta };
+      return {
+        data: null,
+        error: { status: 500, message: "Failed to process player data" },
+        meta,
+      };
 
     return { data, error: null, meta };
   }
@@ -104,7 +124,7 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/player/search/${prefix}`, options?.requestInit);
+    } = await this._fetchAPI(`/player/search/${prefix}`, options?.requestInit);
     if (error) return { data: null, error, meta };
 
     const data = processPlayerSearch(response);
@@ -144,23 +164,27 @@ export default class HiveAPI {
     season?: number,
     options?: Partial<MethodOptions>,
   ): Promise<MethodResponse<ProcessedMonthlyGamesResponse["statistics"][G]>>;
-  public async getStatistics(identifier: string, timeframe: Timeframe, ...args: any[]) {
+  public async getStatistics(
+    identifier: string,
+    timeframe: Timeframe,
+    ...args: (number | Game | Partial<MethodOptions> | undefined)[]
+  ) {
     if (timeframe === Timeframe.AllTime) {
-      let options = args[0] as Partial<MethodOptions> | undefined;
+      const options = args[0] as Partial<MethodOptions> | undefined;
       return this._getStatisticsAllTime(identifier, options);
     }
 
     if (timeframe === Timeframe.Seasonal) {
-      let game = args[0] as Game | undefined;
+      const game = args[0] as Game | undefined;
       let season = args[1] as number | undefined;
-      let options = args[2] as Partial<MethodOptions> | undefined;
+      const options = args[2] as Partial<MethodOptions> | undefined;
 
       if (!game) throw new Error("Game must be specified for seasonal statistics");
       if (Object.values(Game).indexOf(game) === -1)
         throw new Error(`Invalid game specified: ${game}`);
       if (!Games[game].statistics)
         throw new Error(`Statistics are not available for the game: ${game}`);
-      if (season !== undefined && (isNaN(season) || season < 1))
+      if (season !== undefined && (Number.isNaN(season) || season < 1))
         throw new Error("Season must be a positive integer");
       if (!season) season = 1;
 
@@ -169,10 +193,10 @@ export default class HiveAPI {
 
     let month = args[0] as number | undefined;
     let year = args[1] as number | undefined;
-    let options = args[2] as Partial<MethodOptions> | undefined;
-    if (month !== undefined && (isNaN(month) || month < 1 || month > 12))
+    const options = args[2] as Partial<MethodOptions> | undefined;
+    if (month !== undefined && (Number.isNaN(month) || month < 1 || month > 12))
       throw new Error("Month must be a number between 1 and 12");
-    if (year !== undefined && (isNaN(year) || year < 1970))
+    if (year !== undefined && (Number.isNaN(year) || year < 1970))
       throw new Error("Year must be a number greater than or equal to 1970");
     if (!month) month = new Date().getMonth() + 1;
     if (!year) year = new Date().getFullYear();
@@ -188,10 +212,13 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/all/all/${identifier}`, options?.requestInit);
+    } = await this._fetchAPI<{ [key: string]: any }>(
+      `/game/all/all/${identifier}`,
+      options?.requestInit,
+    );
     if (error) return { data: null, error, meta };
 
-    let data = Object.fromEntries(
+    const data = Object.fromEntries(
       Object.entries(response).map(([id, res]) => [
         id,
         id === "main" ? null : (processGame(id as Game, Timeframe.AllTime, false, res) ?? null),
@@ -218,13 +245,13 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(
+    } = await this._fetchAPI<{ [key: string]: any }>(
       `/game/monthly/player/all/${identifier}/${year ?? new Date().getFullYear()}/${month ?? new Date().getMonth() + 1}`,
       options?.requestInit,
     );
     if (error) return { data: null, error, meta };
 
-    let data = Object.fromEntries(
+    const data = Object.fromEntries(
       Object.entries(response).map(([id, res]) => [
         id,
         id === "main" ? null : (processGame(id as Game, Timeframe.Monthly, false, res) ?? null),
@@ -252,12 +279,16 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(
+    } = await this._fetchAPI(
       `/game/season/player/${game}/${identifier}/${season ?? 1}`,
       options?.requestInit,
     );
     if (error) return { data: null, error, meta };
-    return { data: processGame(game, Timeframe.Seasonal, false, response), error: null, meta };
+    return {
+      data: processGame(game, Timeframe.Seasonal, false, response),
+      error: null,
+      meta,
+    };
   }
 
   public async getAvailableMonthlyLeaderboards<G extends Game>(
@@ -268,7 +299,10 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/monthly/${game}/available`, options?.requestInit);
+    } = await this._fetchAPI<AvailableLeaderboardResponse>(
+      `/game/monthly/${game}/available`,
+      options?.requestInit,
+    );
     if (error) return { data: null, error, meta };
     return { data: response, error: null, meta };
   }
@@ -308,11 +342,11 @@ export default class HiveAPI {
     if (timeframe === Timeframe.Monthly) {
       let month = args[0] as number | undefined;
       let year = args[1] as number | undefined;
-      let options = args[2] as Partial<MethodOptions> | undefined;
+      const options = args[2] as Partial<MethodOptions> | undefined;
 
-      if (month !== undefined && (isNaN(month) || month < 1 || month > 12))
+      if (month !== undefined && (Number.isNaN(month) || month < 1 || month > 12))
         throw new Error("Month must be a number between 1 and 12");
-      if (year !== undefined && (isNaN(year) || year < 1970))
+      if (year !== undefined && (Number.isNaN(year) || year < 1970))
         throw new Error("Year must be a number greater than or equal to 1970");
       if (!month) month = new Date().getMonth() + 1;
       if (!year) year = new Date().getFullYear();
@@ -321,15 +355,15 @@ export default class HiveAPI {
     }
     if (timeframe === Timeframe.Seasonal) {
       let season = args[0] as number | undefined;
-      let options = args[1] as Partial<MethodOptions> | undefined;
-      if (season !== undefined && (isNaN(season) || season < 1))
+      const options = args[1] as Partial<MethodOptions> | undefined;
+      if (season !== undefined && (Number.isNaN(season) || season < 1))
         throw new Error("Season must be a positive integer");
       if (!season) season = 1;
 
       return this._getLeaderboardSeasonal(game, season, options);
     }
 
-    let options = args[0] as Partial<MethodOptions> | undefined;
+    const options = args[0] as Partial<MethodOptions> | undefined;
     return this._getLeaderboardAllTime(game, options);
   }
   // /game/all/{game}
@@ -341,9 +375,11 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/all/${game}`, options?.requestInit);
+    } = await this._fetchAPI<any[]>(`/game/all/${game}`, options?.requestInit);
     if (error) return { data: null, error, meta };
-    let data = response.map((res: any) => processGame(game, Timeframe.AllTime, true, res));
+    const data = response
+      .map((res) => processGame(game, Timeframe.AllTime, true, res))
+      .filter((res) => res !== null);
     return { data, error: null, meta };
   }
   // /game/monthly/{game}/{year}/{month}
@@ -359,9 +395,11 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/monthly/${game}/${year}/${month}`, options?.requestInit);
+    } = await this._fetchAPI<any[]>(`/game/monthly/${game}/${year}/${month}`, options?.requestInit);
     if (error) return { data: null, error, meta };
-    let data = response.map((res: any) => processGame(game, Timeframe.Monthly, true, res));
+    const data = response
+      .map((res) => processGame(game, Timeframe.Monthly, true, res))
+      .filter((res) => res !== null);
     return { data, error: null, meta };
   }
   // /game/season/{game}/season
@@ -376,9 +414,11 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/season/${game}/${season}`, options?.requestInit);
+    } = await this._fetchAPI<any[]>(`/game/season/${game}/${season}`, options?.requestInit);
     if (error) return { data: null, error, meta };
-    let data = response.map((res: any) => processGame(game, Timeframe.Seasonal, true, res));
+    const data = response
+      .map((res) => processGame(game, Timeframe.Seasonal, true, res))
+      .filter((res) => res !== null);
     return { data, error: null, meta };
   }
 
@@ -393,7 +433,10 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>("/global/statistics", options?.requestInit);
+    } = await this._fetchAPI<ProcessedGlobalStatisticsResponse>(
+      "/global/statistics",
+      options?.requestInit,
+    );
     if (error) return { data: null, error, meta };
     return { data: response, error: null, meta };
   }
@@ -412,7 +455,7 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/map/${game}`, options?.requestInit);
+    } = await this._fetchAPI<ProcessedMapResponse>(`/game/map/${game}`, options?.requestInit);
     if (error) return { data: null, error, meta };
     return { data: response, error: null, meta };
   }
@@ -431,7 +474,7 @@ export default class HiveAPI {
       data: response,
       error,
       meta,
-    } = await this._fetchAPI<any>(`/game/meta/${game}`, options?.requestInit);
+    } = await this._fetchAPI<ProcessedGameMetadata>(`/game/meta/${game}`, options?.requestInit);
     if (error) return { data: null, error, meta };
     return { data: response, error: null, meta };
   }
