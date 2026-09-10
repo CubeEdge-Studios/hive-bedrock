@@ -1,5 +1,4 @@
 import { API_BASE_ENDPOINT, Game, Games, Timeframe } from "hive-bedrock-data";
-
 import {
   type AvailableLeaderboardResponse,
   type ProcessedAllGamesResponse,
@@ -27,7 +26,7 @@ export interface MethodOptions {
   requestInit?: RequestInit;
 }
 
-export default class HiveAPI {
+export default class HiveAPIv0 {
   constructor(public options: Options = {}) {
     this.options = options;
     this.options.apiBaseEndpoint = this.options.apiBaseEndpoint ?? API_BASE_ENDPOINT;
