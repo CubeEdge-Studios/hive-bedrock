@@ -3,3 +3,7 @@ export type APIClientOptions = {
   timeout?: number;
   headers?: Record<string, string>;
 };
+
+export type APIRequestOptions = {
+  requestInit?: RequestInit;
+};

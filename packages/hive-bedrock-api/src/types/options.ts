@@ -1,12 +1,8 @@
-export type HiveAPIOptions = {
-  baseUrl?: string;
+import type { APIClientOptions } from "../client/types";
 
+export type HiveAPIOptions = {
   resolveDynamicHubTitles?: boolean;
   resolveStatTrackHubTitles?: boolean;
   addVariableEntitlements?: boolean;
   useModernLeaderboardSource?: boolean;
-
-  apiKey?: string;
-
-  timeout?: number;
-};
+} & APIClientOptions;
