@@ -1,5 +1,6 @@
-import type { APIResponse, HiveAPIError, ResponseMetadata } from "../types/response";
-import type { APIClientOptions } from "./types";
+import { API_BASE } from "hive-bedrock-data";
+import type { APIResponse, HiveAPIError, ResponseMetadata } from "../types/response.js";
+import type { APIClientOptions } from "./types.js";
 
 export class APIClient {
   private readonly baseUrl: string;
@@ -7,7 +8,7 @@ export class APIClient {
   private readonly headers: Record<string, string>;
 
   constructor(options: APIClientOptions) {
-    this.baseUrl = options.baseUrl;
+    this.baseUrl = options.baseUrl ?? API_BASE;
     this.timeout = options.timeout ?? 10_000;
     this.headers = options.headers ?? {};
   }
@@ -29,7 +30,6 @@ export class APIClient {
         },
         signal: controller.signal,
       });
-
       const metadata: ResponseMetadata = {
         status: response.status,
         duration: Math.ceil(performance.now() - start),

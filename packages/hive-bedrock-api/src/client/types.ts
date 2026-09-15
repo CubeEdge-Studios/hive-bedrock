@@ -1,5 +1,5 @@
 export type APIClientOptions = {
-  baseUrl: string;
+  baseUrl?: string;
   timeout?: number;
   headers?: Record<string, string>;
 };

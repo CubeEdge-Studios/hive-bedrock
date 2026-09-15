@@ -1,4 +1,4 @@
-import type { APIClientOptions } from "../client/types";
+import type { APIClientOptions } from "../client/types.js";
 
 export type HiveAPIOptions = {
   resolveDynamicHubTitles?: boolean;

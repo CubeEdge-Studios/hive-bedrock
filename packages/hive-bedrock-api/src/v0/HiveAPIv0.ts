@@ -1,4 +1,4 @@
-import { API_BASE_ENDPOINT, Game, Games, Timeframe } from "hive-bedrock-data";
+import { Game, Games, Timeframe } from "hive-bedrock-data";
 import { APIClient } from "../client/APIClient.js";
 import type { APIRequestOptions } from "../client/types.js";
 import type { HiveAPIOptions } from "../types/options.js";
@@ -21,18 +21,22 @@ import processPlayerSearch, {
 export default class HiveAPIv0 {
   private client: APIClient;
 
-  constructor(public options: HiveAPIOptions) {
+  constructor(public options?: HiveAPIOptions) {
     this.client = new APIClient({
-      baseUrl: this.options.baseUrl ?? API_BASE_ENDPOINT,
-      timeout: this.options.timeout ?? 10_000,
+      baseUrl: this.options?.baseUrl,
+      timeout: this.options?.timeout,
       headers: {
         "X-Hive-API-Version": "2024-03-29",
-        "X-Hive-Resolve-Stat-Track": (this.options.resolveStatTrackHubTitles ?? true).toString(),
+        "X-Hive-Resolve-Stat-Track": (this.options?.resolveStatTrackHubTitles ?? true).toString(),
         "X-Hive-Resolve-Dynamic-Hub-Titles": (
-          this.options.resolveDynamicHubTitles ?? true
+          this.options?.resolveDynamicHubTitles ?? true
         ).toString(),
-        "X-Hive-Variable-Entitlements": (this.options.addVariableEntitlements ?? true).toString(),
-        ...options.headers,
+        "X-Hive-Variable-Entitlements": (this.options?.addVariableEntitlements ?? true).toString(),
+        "X-Hive-Leaderboard-Source": (this.options?.useModernLeaderboardSource
+          ? "modern"
+          : "legacy"
+        ).toString(),
+        ...options?.headers,
       },
     });
   }
@@ -47,12 +51,12 @@ export default class HiveAPIv0 {
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<ProcessedPlayerResponse>> {
     const response = await this.client.request(
-      `/game/all/main/${identifier}`,
+      `/v0/game/all/main/${identifier}`,
       options?.requestInit,
     );
     if (response.error) return response;
 
-    const data = processPlayerInfo(response);
+    const data = processPlayerInfo(response.data);
     if (!data)
       return {
         data: null,
@@ -71,10 +75,10 @@ export default class HiveAPIv0 {
     prefix: string,
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<ProcessedPlayerSearchResponse>> {
-    const response = await this.client.request(`/player/search/${prefix}`, options?.requestInit);
+    const response = await this.client.request(`/v0/player/search/${prefix}`, options?.requestInit);
     if (response.error) return response;
 
-    const data = processPlayerSearch(response);
+    const data = processPlayerSearch(response.data);
     if (!data)
       return {
         data: null,
@@ -159,14 +163,14 @@ export default class HiveAPIv0 {
     identifier: string,
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<ProcessedAllGamesResponse>> {
-    const response = await this.client.request<{ [key: string]: any }>(
-      `/game/all/all/${identifier}`,
+    const response = await this.client.request<{ [key: string]: unknown }>(
+      `/v0/game/all/all/${identifier}`,
       options?.requestInit,
     );
     if (response.error) return response;
 
     const data = Object.fromEntries(
-      Object.entries(response).map(([id, res]) => [
+      Object.entries(response.data).map(([id, res]) => [
         id,
         id === "main" ? null : (processGame(id as Game, Timeframe.AllTime, false, res) ?? null),
       ]),
@@ -174,7 +178,7 @@ export default class HiveAPIv0 {
     delete data.main;
     return {
       data: {
-        player: processPlayerInfo(response),
+        player: processPlayerInfo(response.data),
         statistics: data,
       } as ProcessedAllGamesResponse,
       error: null,
@@ -188,14 +192,14 @@ export default class HiveAPIv0 {
     year?: number,
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<ProcessedMonthlyGamesResponse>> {
-    const response = await this.client.request<{ [key: string]: any }>(
-      `/game/monthly/player/all/${identifier}/${year ?? new Date().getFullYear()}/${month ?? new Date().getMonth() + 1}`,
+    const response = await this.client.request<{ [key: string]: unknown }>(
+      `/v0/game/monthly/player/all/${identifier}/${year ?? new Date().getFullYear()}/${month ?? new Date().getMonth() + 1}`,
       options?.requestInit,
     );
     if (response.error) return response;
 
     const data = Object.fromEntries(
-      Object.entries(response).map(([id, res]) => [
+      Object.entries(response.data).map(([id, res]) => [
         id,
         id === "main" ? null : (processGame(id as Game, Timeframe.Monthly, false, res) ?? null),
       ]),
@@ -219,12 +223,12 @@ export default class HiveAPIv0 {
     if (!Games[game].statistics)
       throw new Error(`Statistics are not available for the game: ${game}`);
     const response = await this.client.request(
-      `/game/season/player/${game}/${identifier}/${season ?? 1}`,
+      `/v0/game/season/player/${game}/${identifier}/${season ?? 1}`,
       options?.requestInit,
     );
     if (response.error) return response;
     return {
-      data: processGame(game, Timeframe.Seasonal, false, response),
+      data: processGame(game, Timeframe.Seasonal, false, response.data),
       error: null,
       metadata: response.metadata,
     };
@@ -235,7 +239,7 @@ export default class HiveAPIv0 {
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<AvailableLeaderboardResponse>> {
     const response = await this.client.request<AvailableLeaderboardResponse>(
-      `/game/monthly/${game}/available`,
+      `/v0/game/monthly/${game}/available`,
       options?.requestInit,
     );
     if (response.error) return response;
@@ -306,11 +310,11 @@ export default class HiveAPIv0 {
     game: G,
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<ProcessedGame<Timeframe.AllTime, true>[G][] | null>> {
-    const response = await this.client.request<any[]>(`/game/all/${game}`, options?.requestInit);
+    const response = await this.client.request<any[]>(`/v0/game/all/${game}`, options?.requestInit);
     if (response.error) return response;
     const data = response.data
-      .map((res) => processGame(game, Timeframe.AllTime, true, res))
-      .filter((res) => res !== null);
+      .map((res: any) => processGame(game, Timeframe.AllTime, true, res))
+      .filter((res: any) => res !== null) as ProcessedGame<Timeframe.AllTime, true>[G][];
     return { data, error: null, metadata: response.metadata };
   }
   // /game/monthly/{game}/{year}/{month}
@@ -323,13 +327,13 @@ export default class HiveAPIv0 {
     if (game && !Games[game].statistics)
       throw new Error(`Statistics are not available for the game: ${game}`);
     const response = await this.client.request<any[]>(
-      `/game/monthly/${game}/${year}/${month}`,
+      `/v0/game/monthly/${game}/${year}/${month}`,
       options?.requestInit,
     );
     if (response.error) return response;
     const data = response.data
-      .map((res) => processGame(game, Timeframe.Monthly, true, res))
-      .filter((res) => res !== null);
+      .map((res: any) => processGame(game, Timeframe.Monthly, true, res))
+      .filter((res: any) => res !== null) as ProcessedGame<Timeframe.Monthly, true>[G][];
     return { data, error: null, metadata: response.metadata };
   }
   // /game/season/{game}/season
@@ -341,13 +345,13 @@ export default class HiveAPIv0 {
     if (game && !Games[game].statistics)
       throw new Error(`Statistics are not available for the game: ${game}`);
     const response = await this.client.request<any[]>(
-      `/game/season/${game}/${season}`,
+      `/v0/game/season/${game}/${season}`,
       options?.requestInit,
     );
     if (response.error) return response;
     const data = response.data
-      .map((res) => processGame(game, Timeframe.Seasonal, true, res))
-      .filter((res) => res !== null);
+      .map((res: any) => processGame(game, Timeframe.Seasonal, true, res))
+      .filter((res: any) => res !== null) as ProcessedGame<Timeframe.Seasonal, true>[G][];
     return { data, error: null, metadata: response.metadata };
   }
 
@@ -359,7 +363,7 @@ export default class HiveAPIv0 {
     options?: Partial<APIRequestOptions>,
   ): Promise<APIResponse<ProcessedGlobalStatisticsResponse>> {
     const response = await this.client.request<ProcessedGlobalStatisticsResponse>(
-      "/global/statistics",
+      "/v0/global/statistics",
       options?.requestInit,
     );
     if (response.error) return response;
@@ -377,7 +381,7 @@ export default class HiveAPIv0 {
     if (game && !Games[game].statistics)
       throw new Error(`Statistics are not available for the game: ${game}`);
     const response = await this.client.request<ProcessedMapResponse>(
-      `/game/map/${game}`,
+      `/v0/game/map/${game}`,
       options?.requestInit,
     );
     if (response.error) return response;
@@ -395,7 +399,7 @@ export default class HiveAPIv0 {
     if (game && !Games[game].statistics)
       throw new Error(`Statistics are not available for the game: ${game}`);
     const response = await this.client.request<ProcessedGameMetadata>(
-      `/game/meta/${game}`,
+      `/v0/game/meta/${game}`,
       options?.requestInit,
     );
     if (response.error) return response;
