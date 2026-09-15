@@ -4,24 +4,12 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": ["ES2022", "DOM"],
-
-    "rootDir": "./src",
-    "outDir": "./lib",
-    "declaration": true,
-    "sourceMap": true,
-    "declarationMap": true,
-
     "strict": true,
-    "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "moduleDetection": "force",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src"]
 }
