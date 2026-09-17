@@ -1,3 +1,8 @@
+import type { Game } from "hive-bedrock-data";
+import type { GameStatistics } from "./statistics.js";
+
+type EmptyObject = Record<PropertyKey, never>;
+
 export type Discovery = {
   version: string;
   links: Record<string, string>;
@@ -46,14 +51,14 @@ export type LoginStreak = {
 };
 
 export type ListResponsePlayerStatisticsDto = {
-  data: PlayerStatisticsDto[];
+  data: PlayerStatisticsDto<Game>[];
   pagination: Pagination;
 };
-export type PlayerStatisticsDto = {
+export type PlayerStatisticsDto<G extends Game> = {
   player_id: string;
-  game_id: string;
+  game_id: G;
   first_played_at: string | null;
-  statistics: Record<string, unknown>; // TODO: add types
+  statistics: GameStatistics<G>;
 };
 
 export type EntitlementDto = {
@@ -85,17 +90,17 @@ export type Edition = {
 };
 
 export type ActivityEventDto = ActivityEventDtoDetails &
-  (ActivityRoundPlayed | ActivityCosmeticUnlocked);
+  (ActivityRoundPlayed<Game> | ActivityCosmeticUnlocked);
 export type ActivityEventDtoDetails = {
   id: string;
   occurred_at: string;
 };
-export type ActivityRoundPlayed = {
+export type ActivityRoundPlayed<G extends Game> = {
   type: "round_played";
-  game_id: string;
+  game_id: G;
   details: {
     victory: boolean;
-    changeset: Record<string, unknown>; // TODO: add types
+    changeset: Partial<GameStatistics<G>>;
   };
 };
 export type ActivityCosmeticUnlocked = {
@@ -152,13 +157,13 @@ export type ListResponseLeaderboardDto = {
   data: LeaderboardDto[];
   pagination: Pagination;
 };
-export type LeaderboardEntryDto = {
+export type LeaderboardEntryDto<G extends Game> = {
   rank: number;
   player: PlayerRef;
-  statistics: Record<string, unknown>; // TODO: add types
+  statistics: GameStatistics<G>;
 };
-export type ListResponseLeaderboardEntryDto = {
-  data: LeaderboardEntryDto[];
+export type ListResponseLeaderboardEntryDto<G extends Game> = {
+  data: LeaderboardEntryDto<G>[];
   pagination: Pagination;
 };
 export type PlayerRef = {
@@ -188,7 +193,7 @@ export type ListResponseGameDto = {
 };
 export type StatSchemaEntry = {
   key: string;
-  type: string; // parkour returns 'object' along with other broken statistics
+  type: string; // parkour returns type 'object' along with other broken statistics
 };
 export type Level = {
   level: number;
@@ -204,21 +209,23 @@ export type ProgressionDto = {
   max_level: number;
   prestige: Prestige;
   levels: Level[];
-  reward_types: Record<string, unknown>; // TODO: add types
+  reward_types: { [rewardType: string]: RewardType };
 };
 export type LevelReward = {
-  // TODO: add union for global boolean and globalCosmetic
   name: string;
   icon: string | null;
   type: string;
-  global: boolean;
-  globalCosmetic?: RewardGlobalCosmetic;
-};
+} & ({ global: true; globalCosmetic: RewardGlobalCosmetic } | { global: false });
 export type RewardGlobalCosmetic = {
   type: string;
   display?: string;
   url?: string;
   name?: string;
+};
+export type RewardType = {
+  name: string;
+  icon: string | null;
+  default: string | null;
 };
 export type ListResponseMapDto = {
   data: MapDto[];
@@ -255,8 +262,67 @@ export type StoreOffer = {
   retail_product_id?: string;
   contents?: Content[];
 };
+
 export type Unlock = {
-  type?: string;
-  active?: boolean;
-  metadata?: Record<string, unknown>; // TODO: add types
+  active: boolean;
+} & (
+  | UnlockLegacy
+  | UnlockStorePurchase
+  | UnlockQuestPoints
+  | UnlockAchievement
+  | UnlockGameLevel
+  | UnlockBundlePurchase
+  | UnlockGamePurchase
+  | UnlockSpecialEvent
+);
+export type UnlockLegacy = {
+  type: "legacy";
+  metadata: {
+    originalUnlockType: string;
+    lastAvailable: string;
+    description: string;
+  };
+};
+export type UnlockStorePurchase = {
+  type: "store_purchase";
+  metadata: EmptyObject;
+};
+export type UnlockQuestPoints = {
+  type: "quest_points";
+  metadata: {
+    questPoints: number;
+  };
+};
+export type UnlockAchievement = {
+  type: "achievement";
+  metadata: {
+    requirement: string;
+  };
+};
+export type UnlockGameLevel = {
+  type: "game_level";
+  metadata: {
+    game: string;
+    level: number;
+    additionalRequirement?: string;
+  };
+};
+export type UnlockBundlePurchase = {
+  type: "bundle_purchase";
+  metadata: {
+    bundleId: string;
+  };
+};
+export type UnlockGamePurchase = {
+  type: "game_purchase";
+  metadata: {
+    description: string;
+  };
+};
+export type UnlockSpecialEvent = {
+  type: "special_event";
+  metadata: {
+    game?: string;
+    description: string;
+  };
 };
