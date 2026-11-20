@@ -49,7 +49,7 @@ export default class HiveAPI {
           "X-Hive-Leaderboard-Source": this.options.useModernLeaderboardSource
             ? "modern"
             : "legacy",
-          "X-Hive-API-Version": "2024-03-29",
+          "X-Hive-API-Version": "2026-11-10",
           ...this.options.requestInit?.headers,
           ...requestInit?.headers,
         },

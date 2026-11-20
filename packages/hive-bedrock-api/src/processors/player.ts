@@ -66,7 +66,10 @@ export type CombinedStatTrackHubTitle = SimpleHubTitle & {
 export type HubTitle = SimpleHubTitle | StatTrackHubTitle | CombinedStatTrackHubTitle;
 
 export interface CosmeticResponseTypes {
-  [CosmeticType.Costume]: string;
+  [CosmeticType.Costume]: {
+    name: string;
+    render: string;
+  };
   [CosmeticType.Avatar]: {
     name: string;
     url: string;
@@ -76,13 +79,22 @@ export interface CosmeticResponseTypes {
     name: string;
     icon: string;
     rarity: string;
+    render: string;
   };
-  [CosmeticType.Pet]: string;
-  [CosmeticType.Mount]: string;
+  [CosmeticType.Pet]: {
+    name: string;
+    nickname: string;
+    render: string;
+  };
+  [CosmeticType.Mount]: {
+    name: string;
+    render: string;
+  };
   [CosmeticType.Backbling]: {
     name: string;
     icon: string;
     rarity: string;
+    render: string;
   };
 }
 
