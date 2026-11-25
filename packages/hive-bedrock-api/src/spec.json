@@ -1,0 +1,3252 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "PlayHive API",
+        "description": "Public PlayHive game-stats API. Basic auth is optional on /v0 — authenticated keys receive additional fields; anonymous requests work too.",
+        "version": "0"
+    },
+    "servers": [{ "url": "https://api.playhive.com" }],
+    "tags": [
+        { "name": "Player stats", "description": "Per-game player statistics, global counts and player search." },
+        { "name": "Quests", "description": "Quest board and player quest progress. Requires a valid API key." },
+        { "name": "Games", "description": "The playable games (the internal main game is excluded)." },
+        { "name": "Leaderboards", "description": "All-time, monthly and seasonal leaderboards." },
+        { "name": "Game info", "description": "Static per-game metadata." },
+        { "name": "Quests", "description": "The daily quest board, quest definitions, and player quest progress." },
+        { "name": "Catalogue", "description": "Costume and hub-title catalogue." },
+        { "name": "Cosmetics", "description": "Costumes and hub titles in one collection; type is data, not a path segment." },
+        { "name": "Player activity", "description": "Recent rounds played and cosmetics unlocked." },
+        { "name": "Leaderboards", "description": "Discovery, descriptor, entries, and direct player entry lookup." },
+        { "name": "Player Activity", "description": "Public activity snapshot or authorized live view (freshness)." },
+        { "name": "Players", "description": "Player search, profile, and statistics (collection and per-game)." },
+        { "name": "Discovery", "description": "API root: version and links to the top-level collections." },
+        { "name": "Wishlist", "description": "The items a player has put on their gift wishlist." },
+        { "name": "Game Progression", "description": "Normalized XP progression and level rewards for a game." },
+        { "name": "Network", "description": "Network-wide player counts (document estimates, see meta.is_estimate)." },
+        { "name": "Game Maps", "description": "Maps for a game; unknown game 404, known-but-no-maps 200 []." },
+        { "name": "Player Inventory", "description": "Paged owned cosmetics and entitlements for a player." },
+        { "name": "Player Wishlist", "description": "The items a player has put on their gift wishlist." }
+    ],
+    "paths": {
+        "/v2": {
+            "get": {
+                "tags": ["Discovery"],
+                "operationId": "root",
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/Discovery" } } } } }
+            }
+        },
+        "/v2/quests": {
+            "get": {
+                "tags": ["Quests"],
+                "operationId": "board",
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseQuestDto" } } } } }
+            }
+        },
+        "/v2/quests/{quest_id}": {
+            "get": {
+                "tags": ["Quests"],
+                "operationId": "quest",
+                "parameters": [{ "name": "quest_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/QuestDto" } } } } }
+            }
+        },
+        "/v2/players": {
+            "get": {
+                "tags": ["Players"],
+                "operationId": "search",
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponsePlayerSummaryDto" } } } }
+                }
+            }
+        },
+        "/v2/players/{player_id}": {
+            "get": {
+                "tags": ["Players"],
+                "operationId": "profile",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/PlayerProfileDto" } } } } }
+            }
+        },
+        "/v2/players/{player_id}/wishlist": {
+            "get": {
+                "tags": ["Player Wishlist"],
+                "operationId": "wishlist",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseWishlistEntryDto" } } } }
+                }
+            }
+        },
+        "/v2/players/{player_id}/statistics": {
+            "get": {
+                "tags": ["Players"],
+                "operationId": "statistics",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponsePlayerStatisticsDto" } } } }
+                }
+            }
+        },
+        "/v2/players/{player_id}/statistics/{game_id}": {
+            "get": {
+                "tags": ["Players"],
+                "operationId": "statistics_1",
+                "parameters": [
+                    { "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } },
+                    { "name": "game_id", "in": "path", "required": true, "schema": { "type": "string" } }
+                ],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/PlayerStatisticsDto" } } } } }
+            }
+        },
+        "/v2/players/{player_id}/quests": {
+            "get": {
+                "tags": ["Quests"],
+                "operationId": "player",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/PlayerQuestsDto" } } } } }
+            }
+        },
+        "/v2/players/{player_id}/quests/completed": {
+            "get": {
+                "tags": ["Quests"],
+                "operationId": "completed",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseCompletedQuestDto" } } } }
+                }
+            }
+        },
+        "/v2/players/{player_id}/entitlements": {
+            "get": {
+                "tags": ["Player Inventory"],
+                "operationId": "entitlements",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseEntitlementDto" } } } }
+                }
+            }
+        },
+        "/v2/players/{player_id}/cosmetics": {
+            "get": {
+                "tags": ["Player Inventory"],
+                "operationId": "cosmetics",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseOwnedCosmeticDto" } } } }
+                }
+            }
+        },
+        "/v2/players/{player_id}/activity": {
+            "get": {
+                "tags": ["Player Activity"],
+                "operationId": "activity",
+                "parameters": [{ "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ActivityResponse" } } } } }
+            }
+        },
+        "/v2/network/statistics": {
+            "get": {
+                "tags": ["Network"],
+                "operationId": "statistics_2",
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/EnvelopeNetworkStatisticsDto" } } } }
+                }
+            }
+        },
+        "/v2/leaderboards": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "operationId": "list",
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseLeaderboardDto" } } } }
+                }
+            }
+        },
+        "/v2/leaderboards/{leaderboard_id}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "operationId": "descriptor",
+                "parameters": [{ "name": "leaderboard_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/LeaderboardDto" } } } } }
+            }
+        },
+        "/v2/leaderboards/{leaderboard_id}/entries": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "operationId": "entries",
+                "parameters": [{ "name": "leaderboard_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseLeaderboardEntryDto" } } } }
+                }
+            }
+        },
+        "/v2/leaderboards/{leaderboard_id}/entries/{player_id}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "operationId": "entry",
+                "parameters": [
+                    { "name": "leaderboard_id", "in": "path", "required": true, "schema": { "type": "string" } },
+                    { "name": "player_id", "in": "path", "required": true, "schema": { "type": "string" } }
+                ],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/LeaderboardEntryDto" } } } } }
+            }
+        },
+        "/v2/games": {
+            "get": {
+                "tags": ["Games"],
+                "operationId": "list_1",
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseGameDto" } } } } }
+            }
+        },
+        "/v2/games/{game_id}": {
+            "get": {
+                "tags": ["Games"],
+                "operationId": "get",
+                "parameters": [{ "name": "game_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GameDto" } } } } }
+            }
+        },
+        "/v2/games/{game_id}/progression": {
+            "get": {
+                "tags": ["Game Progression"],
+                "operationId": "progression",
+                "parameters": [{ "name": "game_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ProgressionDto" } } } } }
+            }
+        },
+        "/v2/games/{game_id}/maps": {
+            "get": {
+                "tags": ["Game Maps"],
+                "operationId": "maps",
+                "parameters": [{ "name": "game_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseMapDto" } } } } }
+            }
+        },
+        "/v2/cosmetics": {
+            "get": {
+                "tags": ["Cosmetics"],
+                "operationId": "list_2",
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseCosmeticDto" } } } } }
+            }
+        },
+        "/v2/cosmetics/{cosmetic_id}": {
+            "get": {
+                "tags": ["Cosmetics"],
+                "operationId": "get_1",
+                "parameters": [{ "name": "cosmetic_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": { "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CosmeticDto" } } } } }
+            }
+        },
+        "/v2/cosmetics/{cosmetic_id}/editions": {
+            "get": {
+                "tags": ["Cosmetics"],
+                "operationId": "editions",
+                "parameters": [{ "name": "cosmetic_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseEditionHolderDto" } } } }
+                }
+            }
+        },
+        "/v2/cosmetics/editions": {
+            "get": {
+                "tags": ["Cosmetics"],
+                "operationId": "editionDrops",
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ListResponseEditionDropDto" } } } }
+                }
+            }
+        },
+        "/v0/quests/{uuid}": {
+            "get": {
+                "tags": ["Quests"],
+                "summary": "Quest by id",
+                "description": "A released quest definition: top-level, or a multi quest's part.",
+                "operationId": "one",
+                "parameters": [{ "name": "uuid", "in": "path", "description": "Quest id.", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/V0Quest" } } } },
+                    "401": { "description": "No valid API key." },
+                    "404": { "description": "Unknown quest." },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/quests/current": {
+            "get": {
+                "tags": ["Quests"],
+                "summary": "Current quest board",
+                "description": "Non-special quests whose time window is open now.",
+                "operationId": "current",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": { "*/*": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/V0Quest" } } } }
+                    },
+                    "401": { "description": "No valid API key." },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/player/wishlist/{identifier}": {
+            "get": {
+                "tags": ["Wishlist"],
+                "summary": "Player wishlist",
+                "description": "Wished-for items in the order they were added, without the ones the player already owns. `[]` when the wishlist is empty.",
+                "operationId": "wishlist_1",
+                "parameters": [
+                    { "name": "identifier", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": { "*/*": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/V0WishlistEntry" } } } }
+                    },
+                    "403": { "description": "The player's wishlist is not public." },
+                    "404": { "description": "Unknown player." },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/player/search/{partial}": {
+            "get": {
+                "tags": ["Player stats"],
+                "summary": "Search players",
+                "description": "Username prefix search: `[{UUID, username, username_cc}]`. `partial` must be 4-15 letters, digits or spaces, otherwise 422 `{error, messages}`.",
+                "operationId": "searchPlayer",
+                "parameters": [{ "name": "partial", "in": "path", "description": "Username prefix.", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0SearchResults" } } } },
+                    "422": {
+                        "description": "Invalid `partial`.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0SearchValidationError" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/player/rank/{uuid}": {
+            "get": {
+                "tags": ["Player stats"],
+                "summary": "Player rank",
+                "description": "`{rank: name}` for a player UUID (no usernames or XUIDs). Cached for 1 minute; its own rate-limit bucket of 1000 requests per minute per IP.",
+                "operationId": "playerRank",
+                "parameters": [{ "name": "uuid", "in": "path", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "type": "object", "additionalProperties": {} } } } },
+                    "404": {
+                        "description": "Not a UUID, or unknown player.",
+                        "content": { "*/*": { "schema": { "type": "object", "additionalProperties": {} } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/player/quests/{identifier}": {
+            "get": {
+                "tags": ["Quests"],
+                "summary": "Player quest progress",
+                "description": "The player's accepted quests with progress, plus completed count and daily-limit state.",
+                "operationId": "player_1",
+                "parameters": [
+                    { "name": "identifier", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "*/*": { "schema": { "$ref": "#/components/schemas/V0PlayerQuests" } } } },
+                    "401": { "description": "No valid API key." },
+                    "404": { "description": "Unknown player." },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/player/activity/{id}": {
+            "get": {
+                "tags": ["Player activity"],
+                "summary": "Recent player activity",
+                "description": "Last 7 days: `ROUND_PLAYED` events `{time, type, game, victory, changeset}` and `LOCKER` events `{time, type, unlock_type, unlock_id}`. `[]` for a non-UUID id, hidden activity or nothing recent. Supports ETag / If-None-Match.",
+                "operationId": "index",
+                "parameters": [
+                    { "name": "id", "in": "path", "description": "Player UUID (usernames return `[]`).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "realtime",
+                        "in": "query",
+                        "description": "`true` (partner keys with live-activity access only) returns live activity and sets X-Hive-RealTime / X-Hive-Player-Online response headers."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Events, newest first; `[]` when there is nothing to show.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Activity" } } }
+                    },
+                    "304": { "description": "Not modified (`If-None-Match` matched the ETag)." },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/global/statistics": {
+            "get": {
+                "tags": ["Player stats"],
+                "summary": "Global player counts",
+                "description": "`{unique_players: {global, <game>: count, ...}}`. Estimated counts; games with none are left out.",
+                "operationId": "globalStats",
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0GlobalStatistics" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/special/wars/rewards": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Treasure Wars rewards leaderboard",
+                "description": "Combined January-September 2023 Treasure Wars board used for rewards. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`.",
+                "operationId": "getTreasureWarsSpecialLeaderboard",
+                "parameters": [
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/special/wars/rewards/{amount}/{skip}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Treasure Wars rewards leaderboard",
+                "description": "Combined January-September 2023 Treasure Wars board used for rewards. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`.",
+                "operationId": "getTreasureWarsSpecialLeaderboard_1",
+                "parameters": [
+                    {
+                        "name": "amount",
+                        "in": "path",
+                        "description": "Rows to return, 0-100 (default 100; out-of-range values fall back to the default).",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "skip", "in": "path", "description": "Rows to skip (default 0).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/season/{game}/{season}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Season leaderboard",
+                "description": "Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 1000 (400). 404 when the game has no seasons.",
+                "operationId": "getSeasonLeaderboard",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "season", "in": "path", "description": "Season number (default 1).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 1000.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no seasons.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/season/{game}/{season}/{amount}/{skip}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Season leaderboard",
+                "description": "Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 1000 (400). 404 when the game has no seasons.",
+                "operationId": "getSeasonLeaderboard_1",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "season", "in": "path", "description": "Season number (default 1).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "amount",
+                        "in": "path",
+                        "description": "Rows to return, 0-100 (default 100; out-of-range values fall back to the default).",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "skip", "in": "path", "description": "Rows to skip (default 0).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 1000.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no seasons.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/season/player/{game}/{player}/{season}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Player season entry",
+                "description": "One player's season row, with raw stat keys. `amount`/`skip` are accepted for compatibility and ignored.",
+                "operationId": "getSeasonLeaderboardSingleEntry",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "player", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    { "name": "season", "in": "path", "description": "Season number (default 1).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0LeaderboardEntry" } } } },
+                    "404": {
+                        "description": "Unknown game, no seasons, unknown player or no entry.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/season/player/{game}/{player}/{season}/{amount}/{skip}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Player season entry",
+                "description": "One player's season row, with raw stat keys. `amount`/`skip` are accepted for compatibility and ignored.",
+                "operationId": "getSeasonLeaderboardSingleEntry_1",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "player", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    { "name": "season", "in": "path", "description": "Season number (default 1).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0LeaderboardEntry" } } } },
+                    "404": {
+                        "description": "Unknown game, no seasons, unknown player or no entry.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/monthly/{game}/available": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Available monthly leaderboards",
+                "description": "Months with a leaderboard for this game: `[{month, year, month_number, resource}]`, plus `entries` when X-Hive-Show-Counts is `true`.",
+                "operationId": "getAvailableMonthlyLeaderboards",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Show-Counts",
+                        "in": "header",
+                        "description": "`true` includes per-entry counts on the monthly-available response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0AvailableMonths" } } } },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/monthly/{game}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Monthly leaderboard",
+                "description": "Defaults to the current month. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 100 (400).",
+                "operationId": "getMonthlyLeaderboard",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 100.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/monthly/{game}/{year}/{month}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Monthly leaderboard",
+                "description": "Defaults to the current month. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 100 (400).",
+                "operationId": "getMonthlyLeaderboard_1",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "year", "in": "path", "description": "Four-digit year (default: current).", "required": true, "schema": { "type": "string" } },
+                    { "name": "month", "in": "path", "description": "Month number 1-12 (default: current).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 100.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v1/game/{game}/monthly": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Monthly leaderboard",
+                "description": "Defaults to the current month. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 100 (400).",
+                "operationId": "getMonthlyLeaderboard_2",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 100.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/monthly/{game}/{year}/{month}/{amount}/{skip}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Monthly leaderboard",
+                "description": "Defaults to the current month. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 100 (400).",
+                "operationId": "getMonthlyLeaderboard_3",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "year", "in": "path", "description": "Four-digit year (default: current).", "required": true, "schema": { "type": "string" } },
+                    { "name": "month", "in": "path", "description": "Month number 1-12 (default: current).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "amount",
+                        "in": "path",
+                        "description": "Rows to return, 0-100 (default 100; out-of-range values fall back to the default).",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "skip", "in": "path", "description": "Rows to skip (default 0).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 100.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v1/game/{game}/monthly/{year}/{month}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Monthly leaderboard",
+                "description": "Defaults to the current month. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 100 (400).",
+                "operationId": "getMonthlyLeaderboard_4",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "year", "in": "path", "description": "Four-digit year (default: current).", "required": true, "schema": { "type": "string" } },
+                    { "name": "month", "in": "path", "description": "Month number 1-12 (default: current).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 100.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v1/game/{game}/monthly/{year}/{month}/{amount}/{skip}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Monthly leaderboard",
+                "description": "Defaults to the current month. Rows are `{index, human_index, username, UUID, ...stats}`. `skip` 0 returns an array; `skip` > 0 returns an object keyed by index; empty returns `[]`. `amount` + `skip` may not exceed 100 (400).",
+                "operationId": "getMonthlyLeaderboard_5",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "year", "in": "path", "description": "Four-digit year (default: current).", "required": true, "schema": { "type": "string" } },
+                    { "name": "month", "in": "path", "description": "Month number 1-12 (default: current).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "amount",
+                        "in": "path",
+                        "description": "Rows to return, 0-100 (default 100; out-of-range values fall back to the default).",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "skip", "in": "path", "description": "Rows to skip (default 0).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "400": {
+                        "description": "`amount` + `skip` over 100.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "404": {
+                        "description": "Unknown game or no monthly leaderboards.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/monthly/player/{game}/{player}/{year}/{month}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Player monthly entry",
+                "description": "One player's monthly row, with raw stat keys. With game `all`, an object keyed by game.",
+                "operationId": "getMonthlyLeaderboardSingleEntry",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "player", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    { "name": "year", "in": "path", "description": "Four-digit year (default: current).", "required": true, "schema": { "type": "string" } },
+                    { "name": "month", "in": "path", "description": "Month number 1-12 (default: current).", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0MonthlyEntry" } } } },
+                    "404": {
+                        "description": "Unknown game, unknown player or no entry.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v1/player/game/{game}/monthly/{player}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Player monthly entry",
+                "description": "One player's monthly row, with raw stat keys. With game `all`, an object keyed by game.",
+                "operationId": "getMonthlyLeaderboardSingleEntry_1",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "player", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0MonthlyEntry" } } } },
+                    "404": {
+                        "description": "Unknown game, unknown player or no entry.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/monthly/player/{game}/{player}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "Player monthly entry",
+                "description": "One player's monthly row, with raw stat keys. With game `all`, an object keyed by game.",
+                "operationId": "getMonthlyLeaderboardSingleEntry_2",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "player", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0MonthlyEntry" } } } },
+                    "404": {
+                        "description": "Unknown game, unknown player or no entry.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/meta/{game}": {
+            "get": {
+                "tags": ["Game info"],
+                "summary": "Game metadata",
+                "description": "Name, level curve (`experienceToLevel`), prestige settings and level unlocks. 404 for an unknown game or one without metadata.",
+                "operationId": "getMeta",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0GameMeta" } } } },
+                    "404": {
+                        "description": "Unknown game or no metadata.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/map/{game}": {
+            "get": {
+                "tags": ["Game info"],
+                "summary": "Game maps",
+                "description": "`[{name, season, variant, image}]`. 404 for an unknown game.",
+                "operationId": "getMap",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Maps" } } } },
+                    "404": { "description": "Unknown game.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/leaderboard/{game}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "All-time leaderboard",
+                "description": "Top 100 for a game. Rows are `{index, human_index, username, UUID, ...stats}`. 404 for an unknown game.",
+                "operationId": "getGameLeaderboard",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "404": { "description": "Unknown game.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/all/{game}": {
+            "get": {
+                "tags": ["Leaderboards"],
+                "summary": "All-time leaderboard",
+                "description": "Top 100 for a game. Rows are `{index, human_index, username, UUID, ...stats}`. 404 for an unknown game.",
+                "operationId": "getGameLeaderboard_1",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Leaderboard-Source",
+                        "in": "header",
+                        "description": "Leaderboard source: `modern` or `legacy` (default). Echoed back in the response.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Leaderboard" } } } },
+                    "404": { "description": "Unknown game.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/all/{game}/{identifier}": {
+            "get": {
+                "tags": ["Player stats"],
+                "summary": "One game's stats for a player",
+                "description": "The game's stats object (`UUID`, `xp`, `played`, `victories`, game-specific keys), or `[]` if not played. Stats that are 0 are omitted.",
+                "operationId": "getGameStatisticsEndpoint",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "path",
+                        "description": "Game key: hide, main, dr, wars, murder, sg, sky, ctf, drop, ground, build, party, bridge, grav, bed, parkour, sky-classic, sky-kits. Not every game has every board; unsupported games return 404.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    },
+                    { "name": "identifier", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Variable-Entitlements",
+                        "in": "header",
+                        "description": "`true` adds variable entitlements (main game only).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Api-Version",
+                        "in": "header",
+                        "description": "Cosmetic/hub-title resolution version (default `none`).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Resolve-Stat-Track",
+                        "in": "header",
+                        "description": "`true` resolves stat-track and combined-stat-track hub titles.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Resolve-Dynamic-Hub-Titles",
+                        "in": "header",
+                        "description": "`true` resolves dynamic hub titles (fallback when stat-track is off).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The stats, or `[]` for an unknown game or a game the player never played.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0GameStats" } } }
+                    },
+                    "404": { "description": "Unknown player.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/all/main/{identifier}": {
+            "get": {
+                "tags": ["Player stats"],
+                "summary": "Main (hub) profile",
+                "description": "`{main: {...}}`: username, rank, first_played, cosmetic counts and unlocks; authenticated keys get extra fields.",
+                "operationId": "getMainStatistics",
+                "parameters": [
+                    { "name": "identifier", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Variable-Entitlements",
+                        "in": "header",
+                        "description": "`true` adds variable entitlements (main game only).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Api-Version",
+                        "in": "header",
+                        "description": "Cosmetic/hub-title resolution version (default `none`).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Resolve-Stat-Track",
+                        "in": "header",
+                        "description": "`true` resolves stat-track and combined-stat-track hub titles.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Resolve-Dynamic-Hub-Titles",
+                        "in": "header",
+                        "description": "`true` resolves dynamic hub titles (fallback when stat-track is off).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0MainProfile" } } } },
+                    "404": { "description": "Unknown player.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/game/all/all/{identifier}": {
+            "get": {
+                "tags": ["Player stats"],
+                "summary": "All game stats for a player",
+                "description": "Object keyed by game key; each value is that game's stats object, or `[]` if the player hasn't played it. Stats that are 0 are omitted.",
+                "operationId": "getAllGameStatistics",
+                "parameters": [
+                    { "name": "identifier", "in": "path", "description": "Player username or UUID.", "required": true, "schema": { "type": "string" } },
+                    {
+                        "name": "X-Hive-Variable-Entitlements",
+                        "in": "header",
+                        "description": "`true` adds variable entitlements (main game only).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Api-Version",
+                        "in": "header",
+                        "description": "Cosmetic/hub-title resolution version (default `none`).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Resolve-Stat-Track",
+                        "in": "header",
+                        "description": "`true` resolves stat-track and combined-stat-track hub titles.",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "name": "X-Hive-Resolve-Dynamic-Hub-Titles",
+                        "in": "header",
+                        "description": "`true` resolves dynamic hub titles (fallback when stat-track is off).",
+                        "required": false,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0AllGameStats" } } } },
+                    "404": { "description": "Unknown player.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/catalogue/titles": {
+            "get": {
+                "tags": ["Catalogue"],
+                "summary": "List hub titles",
+                "description": "Paged hub-title catalogue: `[{UUID, display, unlock_data}]`. Invalid filters return 422 `{message, errors}`.",
+                "operationId": "listTitles",
+                "parameters": [
+                    { "name": "limit", "in": "query", "description": "1-50, default 50." },
+                    { "name": "offset", "in": "query", "description": "Default 0." },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Unlock type: STORE_PURCHASE, QUEST_POINTS, GAME_LEVEL, BUNDLE_PURCHASE, SPECIAL_EVENT, ACHIEVEMENT, GAME_PURCHASE or LEGACY."
+                    },
+                    { "name": "active", "in": "query", "description": "Filter on whether the item is currently unlockable." },
+                    { "name": "originalUnlockType", "in": "query", "description": "Same values as `type`." },
+                    { "name": "game", "in": "query", "description": "Filter by game key." }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0CatalogueItems" } } } },
+                    "422": {
+                        "description": "Invalid filter.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0ValidationError" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/catalogue/titles/{id}": {
+            "get": {
+                "tags": ["Catalogue"],
+                "summary": "Hub title by id",
+                "description": "One hub title `{UUID, display, unlock_data}`; 404 if unknown.",
+                "operationId": "showTitle",
+                "parameters": [{ "name": "id", "in": "path", "description": "Hub title UUID.", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0CatalogueItem" } } } },
+                    "404": { "description": "Unknown hub title.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/catalogue/editions": {
+            "get": {
+                "tags": ["Catalogue"],
+                "summary": "Limited editions (hot drops)",
+                "description": "Hot drops, newest first: `[{UUID, name, type, total_sold, windows: [{from, to, stock}]}]`. `UUID` is the cosmetic id for `/v0/catalogue/editions/{id}`; `total_sold` is editions issued so far, `stock` each window's configured allocation. Window bounds are Unix seconds (UTC), half-open, null when unbounded. A drop is listed once its first window opens within 24 hours. Cached 10s.",
+                "operationId": "editionDrops_1",
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0EditionDrops" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/catalogue/editions/{id}": {
+            "get": {
+                "tags": ["Catalogue"],
+                "summary": "Limited-edition holders",
+                "description": "Who holds which edition of a limited cosmetic (hot drop), in edition order: `[{edition, UUID}]`. Any cosmetic type; an unknown or non-limited id is `[]`. Players without a profile are left out, so a page can be shorter than `limit`.",
+                "operationId": "editions_1",
+                "parameters": [
+                    { "name": "id", "in": "path", "description": "Cosmetic UUID.", "required": true, "schema": { "type": "string" } },
+                    { "name": "limit", "in": "query", "description": "1-500, default 500." },
+                    { "name": "offset", "in": "query", "description": "Default 0." }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0EditionHolders" } } } },
+                    "422": {
+                        "description": "Invalid id or paging.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0ValidationError" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/catalogue/costumes": {
+            "get": {
+                "tags": ["Catalogue"],
+                "summary": "List costumes",
+                "description": "Paged costume catalogue: `[{UUID, display, unlock_data}]`. Invalid filters return 422 `{message, errors}`.",
+                "operationId": "listCostumes",
+                "parameters": [
+                    { "name": "limit", "in": "query", "description": "1-50, default 50." },
+                    { "name": "offset", "in": "query", "description": "Default 0." },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Unlock type: STORE_PURCHASE, QUEST_POINTS, GAME_LEVEL, BUNDLE_PURCHASE, SPECIAL_EVENT, ACHIEVEMENT, GAME_PURCHASE or LEGACY."
+                    },
+                    { "name": "active", "in": "query", "description": "Filter on whether the item is currently unlockable." },
+                    { "name": "originalUnlockType", "in": "query", "description": "Same values as `type`." },
+                    { "name": "game", "in": "query", "description": "Filter by game key." }
+                ],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0CatalogueItems" } } } },
+                    "422": {
+                        "description": "Invalid filter.",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0ValidationError" } } }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        },
+        "/v0/catalogue/costumes/{id}": {
+            "get": {
+                "tags": ["Catalogue"],
+                "summary": "Costume by id",
+                "description": "One costume `{UUID, display, unlock_data}`; 404 if unknown.",
+                "operationId": "showCostume",
+                "parameters": [{ "name": "id", "in": "path", "description": "Costume UUID.", "required": true, "schema": { "type": "string" } }],
+                "responses": {
+                    "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0CatalogueItem" } } } },
+                    "404": { "description": "Unknown costume.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } } },
+                    "429": {
+                        "description": "Rate limit exceeded (see `X-RateLimit-*`, `Retry-After`).",
+                        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/V0Error" } } }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Discovery": {
+                "type": "object",
+                "properties": { "version": { "type": "string" }, "links": { "type": "object", "additionalProperties": { "type": "string" } } }
+            },
+            "GameRef": { "type": "object", "properties": { "game_id": { "type": "string" }, "mode": { "type": "string" } } },
+            "ListResponseQuestDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/QuestDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "Pagination": {
+                "type": "object",
+                "properties": {
+                    "limit": { "type": "integer", "format": "int32" },
+                    "offset": { "type": "integer", "format": "int32" },
+                    "cursor": { "type": "string" },
+                    "next_cursor": { "type": "string" },
+                    "total": { "type": "integer", "format": "int64" }
+                }
+            },
+            "QuestDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "kind": { "type": "string" },
+                    "category": { "type": "string" },
+                    "description": { "type": "string" },
+                    "short_description": { "type": "string" },
+                    "games": { "type": "array", "items": { "$ref": "#/components/schemas/GameRef" } },
+                    "required": { "type": "integer", "format": "int32" },
+                    "single_game": { "type": "boolean" },
+                    "reward": { "$ref": "#/components/schemas/Reward" },
+                    "available_from": { "type": "string" },
+                    "available_until": { "type": "string" },
+                    "parent_id": { "type": "string" },
+                    "parts": { "type": "array", "items": { "$ref": "#/components/schemas/QuestDto" } }
+                }
+            },
+            "Reward": {
+                "type": "object",
+                "properties": {
+                    "type": { "type": "string" },
+                    "amount": { "type": "integer", "format": "int32" },
+                    "entitlement_id": { "type": "string" },
+                    "display": { "type": "string" }
+                }
+            },
+            "ListResponsePlayerSummaryDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/PlayerSummaryDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "PlayerSummaryDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "username": { "type": "string" },
+                    "username_normalized": { "type": "string" },
+                    "links": { "type": "object", "additionalProperties": { "type": "string" } }
+                }
+            },
+            "ExternalIdentities": { "type": "object", "properties": { "xuid": { "type": "string" }, "playfab_id": { "type": "string" } } },
+            "LoginStreak": { "type": "object", "properties": { "current": { "type": "number" }, "longest": { "type": "number" } } },
+            "PlayerProfileDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "username": { "type": "string" },
+                    "username_normalized": { "type": "string" },
+                    "external_identities": { "$ref": "#/components/schemas/ExternalIdentities" },
+                    "rank": { "type": "string" },
+                    "paid_ranks": { "type": "array", "items": { "type": "string" } },
+                    "first_joined_at": { "type": "string" },
+                    "player_number": { "type": "number" },
+                    "login_streak": { "$ref": "#/components/schemas/LoginStreak" },
+                    "friend_count": { "type": "number" },
+                    "quest_count": { "type": "number" },
+                    "links": { "type": "object", "additionalProperties": { "type": "string" } }
+                }
+            },
+            "ListResponseWishlistEntryDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/WishlistEntryDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "WishlistEntryDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "type": { "type": "string" },
+                    "display_name": { "type": "string" },
+                    "added_at": { "type": "string" },
+                    "retail_product_id": { "type": "string" },
+                    "minecoin_price": { "type": "integer", "format": "int32" },
+                    "keyart_url": { "type": "string" }
+                }
+            },
+            "ListResponsePlayerStatisticsDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/PlayerStatisticsDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "PlayerStatisticsDto": {
+                "type": "object",
+                "properties": {
+                    "player_id": { "type": "string" },
+                    "game_id": { "type": "string" },
+                    "first_played_at": { "type": "string" },
+                    "statistics": { "type": "object", "additionalProperties": {} }
+                }
+            },
+            "Active": {
+                "type": "object",
+                "properties": {
+                    "quest": { "$ref": "#/components/schemas/QuestDto" },
+                    "accepted_at": { "type": "string" },
+                    "progress": { "type": "integer", "format": "int32" },
+                    "required": { "type": "integer", "format": "int32" },
+                    "status": { "type": "string" },
+                    "parts": { "type": "array", "items": { "$ref": "#/components/schemas/Part" } }
+                }
+            },
+            "DailyLimit": { "type": "object", "properties": { "accepted": { "type": "integer", "format": "int32" }, "resets_at": { "type": "string" } } },
+            "Part": {
+                "type": "object",
+                "properties": {
+                    "quest_id": { "type": "string" },
+                    "progress": { "type": "integer", "format": "int32" },
+                    "required": { "type": "integer", "format": "int32" },
+                    "completed": { "type": "boolean" }
+                }
+            },
+            "PlayerQuestsDto": {
+                "type": "object",
+                "properties": {
+                    "active": { "type": "array", "items": { "$ref": "#/components/schemas/Active" } },
+                    "daily_limit": { "$ref": "#/components/schemas/DailyLimit" },
+                    "completed_count": { "type": "integer", "format": "int32" }
+                }
+            },
+            "CompletedQuestDto": { "type": "object", "properties": { "quest_id": { "type": "string" }, "quest": { "$ref": "#/components/schemas/QuestDto" } } },
+            "ListResponseCompletedQuestDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/CompletedQuestDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "EntitlementDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "type": { "type": "string" },
+                    "display_name": { "type": "string" },
+                    "known": { "type": "boolean" },
+                    "render_url": { "type": "string" }
+                }
+            },
+            "ListResponseEntitlementDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/EntitlementDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "Edition": { "type": "object", "properties": { "number": { "type": "number" }, "total": { "type": "number" } } },
+            "ListResponseOwnedCosmeticDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/OwnedCosmeticDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "OwnedCosmeticDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "type": { "type": "string" },
+                    "display_name": {},
+                    "image_url": { "type": "string" },
+                    "equipped": { "type": "boolean" },
+                    "edition": { "$ref": "#/components/schemas/Edition" },
+                    "render_url": { "type": "string" }
+                }
+            },
+            "ActivityEventDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "occurred_at": { "type": "string" },
+                    "type": { "type": "string" },
+                    "game_id": { "type": "string" },
+                    "details": { "type": "object", "additionalProperties": {} }
+                }
+            },
+            "ActivityMeta": { "type": "object", "properties": { "player_online": { "type": "boolean" }, "activity_disabled": { "type": "boolean" } } },
+            "ActivityResponse": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/ActivityEventDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" },
+                    "meta": { "$ref": "#/components/schemas/ActivityMeta" }
+                }
+            },
+            "EnvelopeNetworkStatisticsDto": {
+                "type": "object",
+                "properties": { "data": { "$ref": "#/components/schemas/NetworkStatisticsDto" }, "meta": { "$ref": "#/components/schemas/Meta" } }
+            },
+            "GameCount": { "type": "object", "properties": { "game_id": { "type": "string" }, "estimated_unique": { "type": "integer", "format": "int64" } } },
+            "Meta": { "type": "object", "properties": { "as_of": { "type": "string" }, "is_estimate": { "type": "boolean" } } },
+            "NetworkStatisticsDto": { "type": "object", "properties": { "players": { "$ref": "#/components/schemas/Players" } } },
+            "Players": {
+                "type": "object",
+                "properties": {
+                    "estimated_unique_total": { "type": "integer", "format": "int64" },
+                    "estimated_unique_by_game": { "type": "array", "items": { "$ref": "#/components/schemas/GameCount" } }
+                }
+            },
+            "LeaderboardDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "game_id": { "type": "string" },
+                    "kind": { "type": "string" },
+                    "period": { "type": "string" },
+                    "season_id": { "type": "integer", "format": "int32" },
+                    "event_id": { "type": "string" },
+                    "status": { "type": "string" },
+                    "ordered_by": { "type": "string" },
+                    "entry_count": { "type": "integer", "format": "int64" },
+                    "entry_count_is_estimate": { "type": "boolean" },
+                    "links": { "type": "object", "additionalProperties": { "type": "string" } }
+                }
+            },
+            "ListResponseLeaderboardDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/LeaderboardDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "LeaderboardEntryDto": {
+                "type": "object",
+                "properties": {
+                    "rank": { "type": "integer", "format": "int64" },
+                    "player": { "$ref": "#/components/schemas/PlayerRef" },
+                    "statistics": { "type": "object", "additionalProperties": {} }
+                }
+            },
+            "ListResponseLeaderboardEntryDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/LeaderboardEntryDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "PlayerRef": { "type": "object", "properties": { "id": { "type": "string" }, "username": { "type": "string" } } },
+            "Capabilities": {
+                "type": "object",
+                "properties": {
+                    "statistics": { "type": "boolean" },
+                    "maps": { "type": "boolean" },
+                    "progression": { "type": "boolean" },
+                    "all_time_leaderboards": { "type": "boolean" },
+                    "monthly_leaderboards": { "type": "boolean" },
+                    "season_leaderboards": { "type": "boolean" }
+                }
+            },
+            "GameDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "short_name": { "type": "string" },
+                    "capabilities": { "$ref": "#/components/schemas/Capabilities" },
+                    "stat_schema": { "type": "array", "items": { "$ref": "#/components/schemas/StatSchemaEntry" } },
+                    "links": { "type": "object", "additionalProperties": { "type": "string" } }
+                }
+            },
+            "ListResponseGameDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/GameDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "StatSchemaEntry": { "type": "object", "properties": { "key": { "type": "string" }, "type": { "type": "string" } } },
+            "Level": {
+                "type": "object",
+                "properties": {
+                    "level": { "type": "integer", "format": "int32" },
+                    "cumulative_xp": { "type": "integer", "format": "int64" },
+                    "rewards": { "type": "array", "items": {} }
+                }
+            },
+            "Prestige": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "max_level": { "type": "integer", "format": "int32" } } },
+            "ProgressionDto": {
+                "type": "object",
+                "properties": {
+                    "game_id": { "type": "string" },
+                    "max_level": { "type": "integer", "format": "int32" },
+                    "prestige": { "$ref": "#/components/schemas/Prestige" },
+                    "levels": { "type": "array", "items": { "$ref": "#/components/schemas/Level" } },
+                    "reward_types": {}
+                }
+            },
+            "ListResponseMapDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/MapDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "MapDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "game_id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "variant": { "type": "string" },
+                    "seasonal_theme": { "type": "string" },
+                    "image_url": { "type": "string" }
+                }
+            },
+            "Content": { "type": "object", "properties": { "type": { "type": "string" }, "id": {} } },
+            "CosmeticDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "type": { "type": "string" },
+                    "display_name": {},
+                    "image_url": { "type": "string" },
+                    "total_sold": { "type": "number" },
+                    "unlock": { "$ref": "#/components/schemas/Unlock" },
+                    "store_offer": { "$ref": "#/components/schemas/StoreOffer" }
+                }
+            },
+            "ListResponseCosmeticDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/CosmeticDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "StoreOffer": {
+                "type": "object",
+                "properties": { "name": {}, "retail_product_id": {}, "contents": { "type": "array", "items": { "$ref": "#/components/schemas/Content" } } }
+            },
+            "Unlock": { "type": "object", "properties": { "type": { "type": "string" }, "active": { "type": "boolean" }, "metadata": {} } },
+            "EditionHolderDto": {
+                "type": "object",
+                "properties": { "number": { "type": "integer", "format": "int64" }, "player": { "$ref": "#/components/schemas/PlayerRef" } }
+            },
+            "ListResponseEditionHolderDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/EditionHolderDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "EditionDropDto": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "display_name": { "type": "string" },
+                    "type": { "type": "string" },
+                    "total": { "type": "integer", "format": "int64" },
+                    "windows": { "type": "array", "items": { "$ref": "#/components/schemas/Window" } }
+                }
+            },
+            "ListResponseEditionDropDto": {
+                "type": "object",
+                "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/EditionDropDto" } },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
+            },
+            "Window": {
+                "type": "object",
+                "properties": { "starts_at": { "type": "string" }, "ends_at": { "type": "string" }, "stock": { "type": "integer", "format": "int32" } }
+            },
+            "V0Quest": {
+                "type": "object",
+                "description": "A quest definition. On /v0/player/quests/{identifier} it also carries the player's progress: `accepted_at`/`progress`/`completed`, and `progress`/`completed` on each part.",
+                "properties": {
+                    "uuid": { "type": "string" },
+                    "multi": { "type": "boolean" },
+                    "special": { "type": "boolean", "description": "Event quest; never on the hub board." },
+                    "description": { "type": "string" },
+                    "short_description": { "type": "string" },
+                    "games": {
+                        "type": "array",
+                        "description": "Game modes the quest counts in, e.g. `wars-duos`; `[]` means any game.",
+                        "items": { "type": "string" }
+                    },
+                    "exact_game": { "type": "boolean" },
+                    "required": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Amount needed; null on a multi quest's definition. In the player view a multi quest's `required` is its part count."
+                    },
+                    "single_game": { "type": "boolean", "description": "Single quests only: all progress must happen in one game." },
+                    "reward_type": { "type": "string", "description": "`quest_points`, `entitlement` or `item`; null when the quest has no reward." },
+                    "reward_amount": { "type": "integer", "format": "int32" },
+                    "reward_entitlement_id": { "type": "string" },
+                    "reward_display": { "type": "string" },
+                    "start": { "type": "integer", "format": "int64", "description": "Unix seconds; 0 = no window." },
+                    "end": { "type": "integer", "format": "int64", "description": "Unix seconds; 0 = no window." },
+                    "parts": { "type": "array", "description": "Multi quests only; null otherwise.", "items": { "$ref": "#/components/schemas/V0Quest" } },
+                    "accepted_at": { "type": "integer", "format": "int64", "description": "Player view only, top-level quests. Unix seconds." },
+                    "progress": { "type": "integer", "format": "int32", "description": "Player view only." },
+                    "completed": { "type": "boolean", "description": "Player view only." }
+                }
+            },
+            "V0WishlistEntry": {
+                "type": "object",
+                "description": "One wished-for item. `name` and `type` are null when the marketplace has no offer for it; the store fields are also null when that offer is not on sale.",
+                "properties": {
+                    "UUID": { "type": "string", "description": "The item's entitlement id: a UUID in practice." },
+                    "added": { "type": "integer", "format": "int64", "description": "Unix seconds when the player added it." },
+                    "name": { "type": "string", "description": "Marketplace title of the offer." },
+                    "type": { "type": "string", "description": "`costume`, `hat`, `backbling`, `pet`, `mount`, `ticket` or `other`." },
+                    "retail_product_id": { "type": "string", "description": "Marketplace offer id, for linking to the store page." },
+                    "minecoin_price": { "type": "integer", "format": "int32" },
+                    "keyart": { "type": "string", "description": "Key art image url." }
+                }
+            },
+            "V0PlayerQuests": {
+                "type": "object",
+                "properties": {
+                    "active": { "type": "array", "items": { "$ref": "#/components/schemas/V0Quest" } },
+                    "completed_count": { "type": "integer", "format": "int32" },
+                    "accepted_today": { "type": "integer", "format": "int32" },
+                    "limit_resets_at": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Unix seconds when the daily accept limit resets; null when not tracked."
+                    }
+                }
+            },
+            "V0Error": {
+                "type": "object",
+                "description": "Error body for 4xx/5xx without a more specific schema.",
+                "properties": { "message": { "type": "string" } },
+                "required": ["message"]
+            },
+            "V0EmptyArray": {
+                "type": "array",
+                "description": "Legacy PHP encoding of an empty object or a missing record: always `[]`, never `{}`.",
+                "items": {},
+                "maxItems": 0
+            },
+            "V0ValidationError": {
+                "type": "object",
+                "description": "Query validation failure (catalogue).",
+                "properties": {
+                    "message": { "type": "string" },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": { "type": "array", "items": { "type": "string" } },
+                        "description": "Field name → messages."
+                    }
+                },
+                "required": ["message", "errors"]
+            },
+            "V0SearchValidationError": {
+                "type": "object",
+                "description": "Validation failure for player search.",
+                "properties": {
+                    "error": { "type": "string" },
+                    "messages": { "type": "object", "properties": { "partial": { "type": "array", "items": { "type": "string" } } } }
+                },
+                "required": ["error", "messages"]
+            },
+            "V0MapEntry": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "season": { "type": "string", "description": "Season enum name, e.g. `SUMMER`." },
+                    "variant": { "type": "string", "description": "Variant enum name." },
+                    "image": { "type": "string", "description": "CDN image URL." }
+                },
+                "required": ["name", "season", "variant", "image"]
+            },
+            "V0Maps": { "type": "array", "items": { "$ref": "#/components/schemas/V0MapEntry" } },
+            "V0LevelUnlock": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "icon": { "type": ["string", "null"] },
+                    "type": { "type": "string", "description": "Unlock category name." },
+                    "global": { "type": "boolean", "description": "`true` for a network-wide cosmetic reward." },
+                    "globalCosmetic": { "type": "object", "description": "Only when `global` is true: the resolved cosmetic." }
+                },
+                "required": ["name", "icon", "type", "global"]
+            },
+            "V0LevelUnlockType": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "icon": { "type": "string" },
+                    "default": { "type": ["string", "null"], "description": "Name of the category's default unlock." }
+                },
+                "required": ["name", "icon", "default"]
+            },
+            "V0GameMeta": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "shortName": { "type": "string" },
+                    "maxLevel": { "type": "integer" },
+                    "allowPrestiging": { "type": "boolean" },
+                    "maxPrestige": { "type": "integer" },
+                    "experienceToLevel": {
+                        "type": "object",
+                        "additionalProperties": { "type": "integer" },
+                        "description": "XP threshold (as a string key) → level reached."
+                    },
+                    "levelUnlocks": {
+                        "anyOf": [
+                            {
+                                "type": "object",
+                                "additionalProperties": { "type": "array", "items": { "$ref": "#/components/schemas/V0LevelUnlock" } },
+                                "description": "Level (as a string key) → unlocks at that level."
+                            },
+                            { "$ref": "#/components/schemas/V0EmptyArray" }
+                        ]
+                    },
+                    "levelUnlockTypes": {
+                        "anyOf": [
+                            {
+                                "type": "object",
+                                "additionalProperties": { "$ref": "#/components/schemas/V0LevelUnlockType" },
+                                "description": "Category name → category info."
+                            },
+                            { "$ref": "#/components/schemas/V0EmptyArray" }
+                        ]
+                    }
+                },
+                "required": ["name", "shortName", "maxLevel", "allowPrestiging", "maxPrestige", "experienceToLevel", "levelUnlocks", "levelUnlockTypes"]
+            },
+            "V0StoreOffer": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "retailProductID": { "type": "string" },
+                    "contents": {
+                        "type": "array",
+                        "items": { "type": "object", "properties": { "type": { "type": "string" }, "UUID": { "type": ["string", "null"] } } }
+                    }
+                },
+                "required": ["name", "retailProductID", "contents"]
+            },
+            "V0CatalogueItem": {
+                "type": "object",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "display": { "type": "string" },
+                    "total_sold": { "type": "integer", "description": "Limited-edition items only." },
+                    "unlock_data": {
+                        "type": "object",
+                        "description": "Passed through from the catalogue; may carry more keys.",
+                        "properties": {
+                            "type": { "type": "string" },
+                            "active": { "type": "boolean" },
+                            "metadata": { "anyOf": [{ "type": "object" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                            "store_offer": { "$ref": "#/components/schemas/V0StoreOffer", "description": "Active store items only." }
+                        }
+                    }
+                },
+                "required": ["UUID", "display", "unlock_data"]
+            },
+            "V0CatalogueItems": { "type": "array", "items": { "$ref": "#/components/schemas/V0CatalogueItem" } },
+            "V0EditionHolder": {
+                "type": "object",
+                "properties": { "edition": { "type": "integer" }, "UUID": { "type": "string", "description": "Player UUID." } },
+                "required": ["edition", "UUID"]
+            },
+            "V0EditionHolders": { "type": "array", "items": { "$ref": "#/components/schemas/V0EditionHolder" } },
+            "V0EditionDrop": {
+                "type": "object",
+                "properties": {
+                    "UUID": { "type": "string", "description": "Cosmetic UUID." },
+                    "name": { "type": ["string", "null"] },
+                    "type": { "type": ["string", "null"], "description": "Cosmetic type, e.g. hat." },
+                    "total_sold": { "type": "integer", "description": "Editions issued so far." },
+                    "windows": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "from": { "type": ["integer", "null"], "description": "Unix seconds (UTC); null = unbounded." },
+                                "to": { "type": ["integer", "null"], "description": "Unix seconds (UTC), exclusive; null = unbounded." },
+                                "stock": { "type": "integer", "description": "Configured allocation for this window." }
+                            },
+                            "required": ["from", "to", "stock"]
+                        }
+                    }
+                },
+                "required": ["UUID", "name", "type", "total_sold", "windows"]
+            },
+            "V0EditionDrops": { "type": "array", "items": { "$ref": "#/components/schemas/V0EditionDrop" } },
+            "V0RoundPlayed": {
+                "type": "object",
+                "properties": {
+                    "time": { "type": "integer", "description": "Unix seconds." },
+                    "type": { "type": "string", "const": "ROUND_PLAYED" },
+                    "game": { "type": "string", "description": "Game database key." },
+                    "victory": { "type": "boolean" },
+                    "changeset": { "type": "object", "additionalProperties": {}, "description": "Raw stat keys gained this round, plus `level` on a level-up." }
+                },
+                "required": ["time", "type", "game", "victory", "changeset"]
+            },
+            "V0LockerUnlock": {
+                "type": "object",
+                "properties": {
+                    "time": { "type": "integer", "description": "Unix seconds." },
+                    "type": { "type": "string", "const": "LOCKER" },
+                    "unlock_type": { "type": "string" },
+                    "unlock_id": { "type": "string" }
+                },
+                "required": ["time", "type", "unlock_type", "unlock_id"]
+            },
+            "V0Activity": {
+                "type": "array",
+                "items": { "anyOf": [{ "$ref": "#/components/schemas/V0RoundPlayed" }, { "$ref": "#/components/schemas/V0LockerUnlock" }] }
+            },
+            "V0SearchResults": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "UUID": { "type": "string" },
+                        "username": { "type": "string" },
+                        "username_cc": { "type": "string", "description": "Username with original capitalisation." }
+                    },
+                    "required": ["UUID", "username", "username_cc"]
+                }
+            },
+            "V0GlobalStatistics": {
+                "type": "object",
+                "properties": {
+                    "unique_players": {
+                        "type": "object",
+                        "additionalProperties": { "type": "integer" },
+                        "description": "Estimated player counts by game key; games with none are left out.",
+                        "properties": { "global": { "type": "integer" } },
+                        "required": ["global"]
+                    }
+                },
+                "required": ["unique_players"]
+            },
+            "V0GameStats": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "description": "One game's stats; keys per game are in the `V0Stats_<game>` schemas.",
+                        "properties": { "UUID": { "type": "string" } },
+                        "required": ["UUID"]
+                    },
+                    { "$ref": "#/components/schemas/V0EmptyArray" }
+                ]
+            },
+            "V0Stats_hide": {
+                "type": "object",
+                "description": "`hide` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "hider_kills": { "type": "integer" },
+                    "seeker_kills": { "type": "integer" },
+                    "taunts": { "type": "integer" }
+                },
+                "required": ["UUID", "deaths", "first_played", "hider_kills", "played", "seeker_kills", "taunts", "victories", "xp"]
+            },
+            "V0Stats_main": {
+                "type": "object",
+                "description": "`main` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xuid": { "type": "integer" },
+                    "mcid": { "type": "string" },
+                    "username": { "type": "string" },
+                    "username_cc": { "type": "string" },
+                    "rank": { "type": "string", "description": "Rank name." },
+                    "first_played": { "type": "integer" },
+                    "daily_login_streak": { "type": "integer" },
+                    "longest_daily_login_streak": { "type": "integer" },
+                    "hub_title_count": { "type": "integer" },
+                    "hub_title_unlocked": { "type": "array", "description": "Unlocked cosmetics; item shape depends on `X-Hive-Api-Version`.", "items": {} },
+                    "avatar_count": { "type": "integer" },
+                    "avatar_unlocked": { "type": "array", "description": "Unlocked cosmetics; item shape depends on `X-Hive-Api-Version`.", "items": {} },
+                    "costume_count": { "type": "integer" },
+                    "costume_unlocked": {
+                        "type": "array",
+                        "description": "Unlocked cosmetics; item shape depends on `X-Hive-Api-Version`. With `X-Hive-Api-Version: 2026-11` or a later date, each costume is `{name, render}` instead of its name, where `render` is the costume's render PNG url.",
+                        "items": {}
+                    },
+                    "hat_count": { "type": "integer" },
+                    "hat_unlocked": {
+                        "type": "array",
+                        "description": "Unlocked cosmetics; item shape depends on `X-Hive-Api-Version`. With `X-Hive-Api-Version: 2026-11` or a later date, each object also has `render`: a 3D render PNG url, or null.",
+                        "items": {}
+                    },
+                    "backbling_count": { "type": "integer" },
+                    "cosmetics.backbling": {
+                        "type": "array",
+                        "description": "Unlocked cosmetics; item shape depends on `X-Hive-Api-Version`. With `X-Hive-Api-Version: 2026-11` or a later date, each object also has `render`: a 3D render PNG url, or null.",
+                        "items": {}
+                    },
+                    "friend_count": { "type": "integer" },
+                    "equipped_hub_title": { "description": "Equipped cosmetic: a name, or an object depending on `X-Hive-Api-Version`." },
+                    "equipped_costume": {
+                        "description": "Equipped cosmetic: a name, or an object depending on `X-Hive-Api-Version`. With `X-Hive-Api-Version: 2026-11` or a later date, each costume is `{name, render}` instead of its name, where `render` is the costume's render PNG url."
+                    },
+                    "equipped_avatar": { "description": "Equipped cosmetic: a name, or an object depending on `X-Hive-Api-Version`." },
+                    "equipped_backbling": {
+                        "description": "Equipped cosmetic: a name, or an object depending on `X-Hive-Api-Version`. With `X-Hive-Api-Version: 2026-11` or a later date, each object also has `render`: a 3D render PNG url, or null."
+                    },
+                    "equipped_hat": {
+                        "description": "Equipped cosmetic: a name, or an object depending on `X-Hive-Api-Version`. With `X-Hive-Api-Version: 2026-11` or a later date, each object also has `render`: a 3D render PNG url, or null."
+                    },
+                    "quest_count": { "type": "integer", "description": "Only for keys with quest access." },
+                    "paid_ranks": { "type": "array", "items": { "type": "string" } },
+                    "pets": {
+                        "type": "array",
+                        "description": "Owned pet names. With `X-Hive-Api-Version: 2026-11` or a later date, each item is `{name, render}` instead, where `render` is a 3D render PNG url or null. A pet also has `nickname`: the player's own name for it (may start with a `§` colour code), or null.",
+                        "items": {}
+                    },
+                    "mounts": {
+                        "type": "array",
+                        "description": "Owned mount names. With `X-Hive-Api-Version: 2026-11` or a later date, each item is `{name, render}` instead, where `render` is a 3D render PNG url or null.",
+                        "items": {}
+                    },
+                    "equipped_pet": {
+                        "type": "object",
+                        "description": "The pet following the player in the hub, as `{name, nickname, render}` (same as an item of `pets`). Only with `X-Hive-Api-Version: 2026-11` or a later date; omitted when no pet is out."
+                    },
+                    "variable_entitlements": {
+                        "type": "array",
+                        "description": "Only with `X-Hive-Variable-Entitlements: true`.",
+                        "items": { "type": "string" }
+                    },
+                    "player_number": { "type": "integer", "description": "1-based join position on the network." }
+                },
+                "required": [
+                    "UUID",
+                    "avatar_count",
+                    "backbling_count",
+                    "costume_count",
+                    "daily_login_streak",
+                    "first_played",
+                    "friend_count",
+                    "hat_count",
+                    "hub_title_count",
+                    "longest_daily_login_streak",
+                    "mounts",
+                    "pets",
+                    "player_number",
+                    "rank"
+                ]
+            },
+            "V0Stats_dr": {
+                "type": "object",
+                "description": "`dr` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "checkpoints": { "type": "integer" },
+                    "activated": { "type": "integer" },
+                    "kills": { "type": "integer" }
+                },
+                "required": ["UUID", "activated", "checkpoints", "deaths", "first_played", "kills", "played", "victories", "xp"]
+            },
+            "V0Stats_wars": {
+                "type": "object",
+                "description": "`wars` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "treasure_destroyed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" }
+                },
+                "required": ["UUID", "deaths", "final_kills", "first_played", "kills", "played", "prestige", "treasure_destroyed", "victories", "xp"]
+            },
+            "V0Stats_murder": {
+                "type": "object",
+                "description": "`murder` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "coins": { "type": "integer" },
+                    "murders": { "type": "integer" },
+                    "murderer_eliminations": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "bux": { "type": "integer" }
+                },
+                "required": [
+                    "UUID",
+                    "bux",
+                    "coins",
+                    "deaths",
+                    "first_played",
+                    "murderer_eliminations",
+                    "murders",
+                    "played",
+                    "prestige",
+                    "uncapped_xp",
+                    "victories",
+                    "xp"
+                ]
+            },
+            "V0Stats_sg": {
+                "type": "object",
+                "description": "`sg` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "crates": { "type": "integer" },
+                    "deathmatches": { "type": "integer" },
+                    "cows": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "teleporters_used": { "type": "integer" },
+                    "launchpads_used": { "type": "integer" },
+                    "flares_used": { "type": "integer" }
+                },
+                "required": [
+                    "UUID",
+                    "cows",
+                    "crates",
+                    "deathmatches",
+                    "deaths",
+                    "first_played",
+                    "flares_used",
+                    "kills",
+                    "launchpads_used",
+                    "played",
+                    "teleporters_used",
+                    "victories",
+                    "xp"
+                ]
+            },
+            "V0Stats_sky": {
+                "type": "object",
+                "description": "`sky` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "mystery_chests_destroyed": { "type": "integer" },
+                    "ores_mined": { "type": "integer" },
+                    "spells_used": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "final_kills": { "type": "integer" }
+                },
+                "required": [
+                    "UUID",
+                    "deaths",
+                    "final_kills",
+                    "first_played",
+                    "kills",
+                    "mystery_chests_destroyed",
+                    "ores_mined",
+                    "played",
+                    "prestige",
+                    "spells_used",
+                    "victories",
+                    "xp"
+                ]
+            },
+            "V0Stats_ctf": {
+                "type": "object",
+                "description": "`ctf` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "assists": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "flags_captured": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "flags_returned": { "type": "integer" }
+                },
+                "required": ["UUID", "assists", "deaths", "first_played", "flags_captured", "flags_returned", "kills", "played", "victories", "xp"]
+            },
+            "V0Stats_drop": {
+                "type": "object",
+                "description": "`drop` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "blocks_destroyed": { "type": "integer" },
+                    "powerups_collected": { "type": "integer" },
+                    "vaults_used": { "type": "integer" },
+                    "deaths": { "type": "integer" }
+                },
+                "required": ["UUID", "blocks_destroyed", "deaths", "first_played", "played", "powerups_collected", "vaults_used", "victories", "xp"]
+            },
+            "V0Stats_ground": {
+                "type": "object",
+                "description": "`ground` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "blocks_destroyed": { "type": "integer" },
+                    "blocks_placed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "projectiles_fired": { "type": "integer" },
+                    "kills": { "type": "integer" }
+                },
+                "required": ["UUID", "blocks_destroyed", "blocks_placed", "deaths", "first_played", "kills", "played", "projectiles_fired", "victories", "xp"]
+            },
+            "V0Stats_build": {
+                "type": "object",
+                "description": "`build` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "rating_good_received": { "type": "integer" },
+                    "rating_love_received": { "type": "integer" },
+                    "rating_meh_received": { "type": "integer" },
+                    "rating_okay_received": { "type": "integer" },
+                    "rating_great_received": { "type": "integer" }
+                },
+                "required": [
+                    "UUID",
+                    "first_played",
+                    "played",
+                    "rating_good_received",
+                    "rating_great_received",
+                    "rating_love_received",
+                    "rating_meh_received",
+                    "rating_okay_received",
+                    "victories",
+                    "xp"
+                ]
+            },
+            "V0Stats_party": {
+                "type": "object",
+                "description": "`party` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "powerups_collected": { "type": "integer" },
+                    "rounds_survived": { "type": "integer" }
+                },
+                "required": ["UUID", "first_played", "played", "powerups_collected", "rounds_survived", "victories", "xp"]
+            },
+            "V0Stats_bridge": {
+                "type": "object",
+                "description": "`bridge` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "goals": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" }
+                },
+                "required": ["UUID", "deaths", "first_played", "goals", "kills", "played", "victories", "xp"]
+            },
+            "V0Stats_grav": {
+                "type": "object",
+                "description": "`grav` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "maps_completed": { "type": "integer" },
+                    "maps_completed_without_dying": { "type": "integer" }
+                },
+                "required": ["UUID", "deaths", "first_played", "maps_completed", "maps_completed_without_dying", "played", "victories", "xp"]
+            },
+            "V0Stats_bed": {
+                "type": "object",
+                "description": "`bed` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "beds_destroyed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" }
+                },
+                "required": ["UUID", "beds_destroyed", "deaths", "final_kills", "first_played", "kills", "played", "prestige", "victories", "xp"]
+            },
+            "V0Stats_parkour": {
+                "type": "object",
+                "description": "`parkour` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "parkours": {
+                        "type": "object",
+                        "description": "World name → `{parkour_stars, <course name>: {best_run_time, best_checkpoint_times, course_stars, collected_stars}}`."
+                    }
+                },
+                "required": ["UUID", "played", "victories", "xp"]
+            },
+            "V0Stats_sky-classic": {
+                "type": "object",
+                "description": "`sky-classic` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "selected_kit": { "type": "string" }
+                },
+                "required": ["UUID", "deaths", "kills", "played", "victories", "xp"]
+            },
+            "V0Stats_sky-kits": {
+                "type": "object",
+                "description": "`sky-kits` player stats. Count stats are always present (0 when unplayed); string/list fields are omitted when unset.",
+                "properties": {
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "ores_mined": { "type": "integer" },
+                    "spells_used": { "type": "integer" },
+                    "mystery_chests_destroyed": { "type": "integer" },
+                    "selected_kit": { "type": "string" }
+                },
+                "required": ["UUID", "deaths", "kills", "mystery_chests_destroyed", "ores_mined", "played", "spells_used", "victories", "xp"]
+            },
+            "V0AllGameStats": {
+                "type": "object",
+                "description": "Every game, keyed by game key.",
+                "properties": {
+                    "hide": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_hide" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "main": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_main" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "dr": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_dr" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "wars": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_wars" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "murder": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_murder" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "sg": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_sg" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "sky": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_sky" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "ctf": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_ctf" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "drop": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_drop" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "ground": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_ground" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "build": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_build" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "party": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_party" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "bridge": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_bridge" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "grav": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_grav" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "bed": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_bed" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "parkour": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_parkour" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "sky-classic": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_sky-classic" }, { "$ref": "#/components/schemas/V0EmptyArray" }] },
+                    "sky-kits": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_sky-kits" }, { "$ref": "#/components/schemas/V0EmptyArray" }] }
+                },
+                "required": [
+                    "bed",
+                    "bridge",
+                    "build",
+                    "ctf",
+                    "dr",
+                    "drop",
+                    "grav",
+                    "ground",
+                    "hide",
+                    "main",
+                    "murder",
+                    "parkour",
+                    "party",
+                    "sg",
+                    "sky",
+                    "sky-classic",
+                    "sky-kits",
+                    "wars"
+                ]
+            },
+            "V0MainProfile": {
+                "type": "object",
+                "properties": { "main": { "anyOf": [{ "$ref": "#/components/schemas/V0Stats_main" }, { "$ref": "#/components/schemas/V0EmptyArray" }] } },
+                "required": ["main"]
+            },
+            "V0LeaderboardRow": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Leaderboard row; stat keys per game are in the `V0LeaderboardRow_<game>` schemas.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0Leaderboard": {
+                "anyOf": [
+                    { "type": "array", "description": "`skip` 0, or no rows (`[]`).", "items": { "$ref": "#/components/schemas/V0LeaderboardRow" } },
+                    {
+                        "type": "object",
+                        "additionalProperties": { "$ref": "#/components/schemas/V0LeaderboardRow" },
+                        "description": "`skip` > 0: an object keyed by the row's `index` (as a string)."
+                    }
+                ]
+            },
+            "V0LeaderboardEntry": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "One player's row; raw stat keys per game are in the `V0LeaderboardEntry_<game>` schemas.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" }
+                },
+                "required": ["index", "human_index", "username"]
+            },
+            "V0LeaderboardRow_hide": {
+                "type": "object",
+                "description": "`hide` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "hider_kills": { "type": "integer" },
+                    "seeker_kills": { "type": "integer" },
+                    "taunts": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_hide": {
+                "type": "object",
+                "description": "`hide` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "hider_kills": { "type": "integer" },
+                    "seeker_kills": { "type": "integer" },
+                    "taunts": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["deaths", "hider_kills", "human_index", "index", "seeker_kills", "taunts", "username"]
+            },
+            "V0LeaderboardRow_dr": {
+                "type": "object",
+                "description": "`dr` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "checkpoints": { "type": "integer" },
+                    "activated": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_dr": {
+                "type": "object",
+                "description": "`dr` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "checkpoints": { "type": "integer" },
+                    "activated": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["activated", "checkpoints", "deaths", "human_index", "index", "kills", "username"]
+            },
+            "V0LeaderboardRow_wars": {
+                "type": "object",
+                "description": "`wars` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "treasure_destroyed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_wars": {
+                "type": "object",
+                "description": "`wars` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "treasure_destroyed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["deaths", "final_kills", "human_index", "index", "kills", "treasure_destroyed", "username"]
+            },
+            "V0LeaderboardRow_murder": {
+                "type": "object",
+                "description": "`murder` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "coins": { "type": "integer" },
+                    "murders": { "type": "integer" },
+                    "murderer_eliminations": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "bux": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_murder": {
+                "type": "object",
+                "description": "`murder` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "coins": { "type": "integer" },
+                    "murders": { "type": "integer" },
+                    "murderer_eliminations": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "bux": { "type": "integer" }
+                },
+                "required": ["bux", "coins", "deaths", "human_index", "index", "murderer_eliminations", "murders", "uncapped_xp", "uncapped_xp", "username"]
+            },
+            "V0LeaderboardRow_sg": {
+                "type": "object",
+                "description": "`sg` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "crates": { "type": "integer" },
+                    "deathmatches": { "type": "integer" },
+                    "cows": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "teleporters_used": { "type": "integer" },
+                    "launchpads_used": { "type": "integer" },
+                    "flares_used": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_sg": {
+                "type": "object",
+                "description": "`sg` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "crates": { "type": "integer" },
+                    "deathmatches": { "type": "integer" },
+                    "cows": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "teleporters_used": { "type": "integer" },
+                    "launchpads_used": { "type": "integer" },
+                    "flares_used": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": [
+                    "cows",
+                    "crates",
+                    "deathmatches",
+                    "deaths",
+                    "flares_used",
+                    "human_index",
+                    "index",
+                    "kills",
+                    "launchpads_used",
+                    "teleporters_used",
+                    "username"
+                ]
+            },
+            "V0LeaderboardRow_sky": {
+                "type": "object",
+                "description": "`sky` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "mystery_chests_destroyed": { "type": "integer" },
+                    "ores_mined": { "type": "integer" },
+                    "spells_used": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_sky": {
+                "type": "object",
+                "description": "`sky` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "mystery_chests_destroyed": { "type": "integer" },
+                    "ores_mined": { "type": "integer" },
+                    "spells_used": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["deaths", "final_kills", "human_index", "index", "kills", "mystery_chests_destroyed", "ores_mined", "spells_used", "username"]
+            },
+            "V0LeaderboardRow_ctf": {
+                "type": "object",
+                "description": "`ctf` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "assists": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "flags_captured": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "flags_returned": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_ctf": {
+                "type": "object",
+                "description": "`ctf` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "assists": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "flags_captured": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "flags_returned": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["assists", "deaths", "flags_captured", "flags_returned", "human_index", "index", "kills", "username"]
+            },
+            "V0LeaderboardRow_drop": {
+                "type": "object",
+                "description": "`drop` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "blocks_destroyed": { "type": "integer" },
+                    "powerups_collected": { "type": "integer" },
+                    "vaults_used": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_drop": {
+                "type": "object",
+                "description": "`drop` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "blocks_destroyed": { "type": "integer" },
+                    "powerups_collected": { "type": "integer" },
+                    "vaults_used": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["blocks_destroyed", "deaths", "human_index", "index", "powerups_collected", "username", "vaults_used"]
+            },
+            "V0LeaderboardRow_ground": {
+                "type": "object",
+                "description": "`ground` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "blocks_destroyed": { "type": "integer" },
+                    "blocks_placed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "projectiles_fired": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_ground": {
+                "type": "object",
+                "description": "`ground` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "blocks_destroyed": { "type": "integer" },
+                    "blocks_placed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "projectiles_fired": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["blocks_destroyed", "blocks_placed", "deaths", "human_index", "index", "kills", "projectiles_fired", "username"]
+            },
+            "V0LeaderboardRow_build": {
+                "type": "object",
+                "description": "`build` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "rating_good_received": { "type": "integer" },
+                    "rating_love_received": { "type": "integer" },
+                    "rating_meh_received": { "type": "integer" },
+                    "rating_okay_received": { "type": "integer" },
+                    "rating_great_received": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_build": {
+                "type": "object",
+                "description": "`build` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "rating_good_received": { "type": "integer" },
+                    "rating_love_received": { "type": "integer" },
+                    "rating_meh_received": { "type": "integer" },
+                    "rating_okay_received": { "type": "integer" },
+                    "rating_great_received": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": [
+                    "human_index",
+                    "index",
+                    "rating_good_received",
+                    "rating_great_received",
+                    "rating_love_received",
+                    "rating_meh_received",
+                    "rating_okay_received",
+                    "username"
+                ]
+            },
+            "V0LeaderboardRow_party": {
+                "type": "object",
+                "description": "`party` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "powerups_collected": { "type": "integer" },
+                    "rounds_survived": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_party": {
+                "type": "object",
+                "description": "`party` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "powerups_collected": { "type": "integer" },
+                    "rounds_survived": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["human_index", "index", "powerups_collected", "rounds_survived", "username"]
+            },
+            "V0LeaderboardRow_bridge": {
+                "type": "object",
+                "description": "`bridge` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "goals": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_bridge": {
+                "type": "object",
+                "description": "`bridge` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "m_solo_deaths": { "type": "integer" },
+                    "m_solo_goals": { "type": "integer" },
+                    "m_solo_kills": { "type": "integer" },
+                    "m_solo_played": { "type": "integer" },
+                    "m_solo_victories": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["human_index", "index", "m_solo_deaths", "m_solo_goals", "m_solo_kills", "m_solo_played", "m_solo_victories", "username"]
+            },
+            "V0LeaderboardRow_grav": {
+                "type": "object",
+                "description": "`grav` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "maps_completed": { "type": "integer" },
+                    "maps_completed_without_dying": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_grav": {
+                "type": "object",
+                "description": "`grav` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "maps_completed": { "type": "integer" },
+                    "maps_completed_without_dying": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["deaths", "human_index", "index", "maps_completed", "maps_completed_without_dying", "username"]
+            },
+            "V0LeaderboardRow_bed": {
+                "type": "object",
+                "description": "`bed` leaderboard row. Stat keys use display names.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based position." },
+                    "human_index": { "type": "integer", "description": "1-based position." },
+                    "username": { "type": "string" },
+                    "UUID": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "beds_destroyed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["index", "human_index", "username", "UUID"]
+            },
+            "V0LeaderboardEntry_bed": {
+                "type": "object",
+                "description": "`bed` single-player row. Stat keys are raw, unlike list rows.",
+                "properties": {
+                    "index": { "type": "integer", "description": "0-based rank; 2147483646 when not ranked." },
+                    "human_index": { "type": "integer" },
+                    "username": { "type": "string" },
+                    "xp": { "type": "integer" },
+                    "played": { "type": "integer" },
+                    "victories": { "type": "integer" },
+                    "first_played": { "type": "integer" },
+                    "final_kills": { "type": "integer" },
+                    "kills": { "type": "integer" },
+                    "beds_destroyed": { "type": "integer" },
+                    "deaths": { "type": "integer" },
+                    "prestige": { "type": "integer" },
+                    "uncapped_xp": { "type": "integer" }
+                },
+                "required": ["beds_destroyed", "deaths", "final_kills", "human_index", "index", "kills", "username"]
+            },
+            "V0MonthlyEntry": {
+                "anyOf": [
+                    { "$ref": "#/components/schemas/V0LeaderboardEntry" },
+                    {
+                        "type": "object",
+                        "description": "`game` = `all`: every leaderboard game, keyed by game key. A game the player has no entry in carries the not-ranked `index` 2147483646.",
+                        "properties": {
+                            "hide": { "$ref": "#/components/schemas/V0LeaderboardEntry_hide" },
+                            "dr": { "$ref": "#/components/schemas/V0LeaderboardEntry_dr" },
+                            "wars": { "$ref": "#/components/schemas/V0LeaderboardEntry_wars" },
+                            "murder": { "$ref": "#/components/schemas/V0LeaderboardEntry_murder" },
+                            "sg": { "$ref": "#/components/schemas/V0LeaderboardEntry_sg" },
+                            "sky": { "$ref": "#/components/schemas/V0LeaderboardEntry_sky" },
+                            "ctf": { "$ref": "#/components/schemas/V0LeaderboardEntry_ctf" },
+                            "drop": { "$ref": "#/components/schemas/V0LeaderboardEntry_drop" },
+                            "ground": { "$ref": "#/components/schemas/V0LeaderboardEntry_ground" },
+                            "build": { "$ref": "#/components/schemas/V0LeaderboardEntry_build" },
+                            "party": { "$ref": "#/components/schemas/V0LeaderboardEntry_party" },
+                            "bridge": { "$ref": "#/components/schemas/V0LeaderboardEntry_bridge" },
+                            "grav": { "$ref": "#/components/schemas/V0LeaderboardEntry_grav" },
+                            "bed": { "$ref": "#/components/schemas/V0LeaderboardEntry_bed" }
+                        },
+                        "required": ["bed", "bridge", "build", "ctf", "dr", "drop", "grav", "ground", "hide", "murder", "party", "sg", "sky", "wars"]
+                    }
+                ]
+            },
+            "V0AvailableMonths": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "month": { "type": "string", "description": "Lower-case month name, e.g. `january`." },
+                        "year": { "type": "string", "description": "Four-digit year, as a string." },
+                        "month_number": { "type": "integer" },
+                        "resource": { "type": "string", "description": "Path of that month's leaderboard." },
+                        "entries": { "type": "integer", "description": "Estimated rows; only with `X-Hive-Show-Counts: true`." }
+                    },
+                    "required": ["month", "year", "month_number", "resource"]
+                }
+            }
+        },
+        "securitySchemes": { "basicAuth": { "type": "http", "scheme": "basic" } }
+    }
+}

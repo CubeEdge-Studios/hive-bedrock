@@ -1,11 +1,20 @@
 import type { Game } from "hive-bedrock-data";
-import type { GameStatistics } from "./statistics.js";
-
-type EmptyObject = Record<PropertyKey, never>;
+import type { CatalogueUnlock } from "../../types/catalogue.js";
+import type { V2GameStatistics } from "./statistics.js";
 
 export type Discovery = {
   version: string;
   links: Record<string, string>;
+};
+
+export type GameRef = {
+  game_id: Game;
+  mode: string | null;
+};
+
+export type ListResponseQuestDto = {
+  data: QuestDto[];
+  pagination: Pagination;
 };
 
 export type Pagination = {
@@ -14,6 +23,29 @@ export type Pagination = {
   cursor?: string;
   next_cursor?: string;
   total?: number;
+};
+
+export type QuestDto = {
+  id: string;
+  kind: string;
+  category: string;
+  description: string;
+  short_description: string;
+  games: GameRef[];
+  required: number;
+  single_game: boolean;
+  reward: Reward;
+  available_from: string;
+  available_until: string;
+  parent_id: string | null;
+  parts: QuestDto[] | null;
+};
+
+export type Reward = {
+  type: string;
+  amount?: number;
+  entitlement_id?: string;
+  display?: string;
 };
 
 export type ListResponsePlayerSummaryDto = {
@@ -27,6 +59,14 @@ export type PlayerSummaryDto = {
   links?: Record<string, string>;
 };
 
+export type ExternalIdentities = {
+  xuid: string;
+  playfab_id: string;
+};
+export type LoginStreak = {
+  current: number;
+  longest: number;
+};
 export type PlayerProfileDto = {
   id: string;
   username: string;
@@ -41,13 +81,19 @@ export type PlayerProfileDto = {
   quest_count: number;
   links?: Record<string, string>;
 };
-export type ExternalIdentities = {
-  xuid: string;
-  playfab_id: string;
+
+export type ListResponseWishlistEntryDto = {
+  data: WisthlistEntryDto[];
+  pagination: Pagination;
 };
-export type LoginStreak = {
-  current: number;
-  longest: number;
+export type WisthlistEntryDto = {
+  id: string;
+  type: string;
+  display_name: string;
+  added_at: string;
+  retail_product_id: string;
+  minecoins_price: number;
+  keyart_url: string;
 };
 
 export type ListResponsePlayerStatisticsDto = {
@@ -58,7 +104,35 @@ export type PlayerStatisticsDto<G extends Game> = {
   player_id: string;
   game_id: G;
   first_played_at: string | null;
-  statistics: GameStatistics<G>;
+  statistics: V2GameStatistics<G>;
+};
+
+export type Active = {
+  quest: QuestDto;
+  accepted_at: string;
+  progress: number;
+  required: number;
+  status: string;
+  parts: Part[];
+};
+export type DailyLimit = {
+  accepted: number;
+  resets_at: string;
+};
+export type Part = {
+  quest_id: string;
+  progress: number;
+  required: number;
+  completed: boolean;
+};
+export type PlayerQuestsDto = {
+  active: Active[];
+  daily_limit: DailyLimit;
+  completed_count: number;
+};
+export type CompletedQuestDto = {
+  quest_id: string;
+  quest: QuestDto;
 };
 
 export type EntitlementDto = {
@@ -72,6 +146,11 @@ export type ListResponseEntitlementDto = {
   pagination: Pagination;
 };
 
+export type Edition = {
+  number: number;
+  total: number;
+};
+
 export type ListResponseOwnedCosmeticDto = {
   data: OwnedCosmeticDto[];
   pagination: Pagination;
@@ -82,11 +161,8 @@ export type OwnedCosmeticDto = {
   display_name?: string;
   image_url?: string;
   equipped: boolean;
+  render_url?: string;
   edition?: Edition;
-};
-export type Edition = {
-  number: number;
-  total: number;
 };
 
 export type ActivityEventDto = ActivityEventDtoDetails &
@@ -100,7 +176,7 @@ export type ActivityRoundPlayed<G extends Game> = {
   game_id: G;
   details: {
     victory: boolean;
-    changeset: Partial<GameStatistics<G>>;
+    changeset: Partial<V2GameStatistics<G>>;
   };
 };
 export type ActivityCosmeticUnlocked = {
@@ -160,7 +236,7 @@ export type ListResponseLeaderboardDto = {
 export type LeaderboardEntryDto<G extends Game> = {
   rank: number;
   player: PlayerRef;
-  statistics: GameStatistics<G>;
+  statistics: V2GameStatistics<G>;
 };
 export type ListResponseLeaderboardEntryDto<G extends Game> = {
   data: LeaderboardEntryDto<G>[];
@@ -250,7 +326,7 @@ export type CosmeticDto = {
   display_name?: string;
   image_url?: string;
   total_sold?: number;
-  unlock?: Unlock;
+  unlock?: CatalogueUnlock;
   store_offer?: StoreOffer;
 };
 export type ListResponseCosmeticDto = {
@@ -263,66 +339,23 @@ export type StoreOffer = {
   contents?: Content[];
 };
 
-export type Unlock = {
-  active: boolean;
-} & (
-  | UnlockLegacy
-  | UnlockStorePurchase
-  | UnlockQuestPoints
-  | UnlockAchievement
-  | UnlockGameLevel
-  | UnlockBundlePurchase
-  | UnlockGamePurchase
-  | UnlockSpecialEvent
-);
-export type UnlockLegacy = {
-  type: "legacy";
-  metadata: {
-    originalUnlockType: string;
-    lastAvailable: string;
-    description: string;
-  };
+export type EditionHolderDto = {
+  number: number;
+  player: PlayerRef;
 };
-export type UnlockStorePurchase = {
-  type: "store_purchase";
-  metadata: EmptyObject;
+export type ListResponseEditionHolderDto = {
+  data: EditionHolderDto[];
+  pagination: Pagination;
 };
-export type UnlockQuestPoints = {
-  type: "quest_points";
-  metadata: {
-    questPoints: number;
-  };
+export type EditionDropDto = {
+  id: string;
+  display_name: string;
+  type: string;
+  total: number;
+  windows: Window[];
 };
-export type UnlockAchievement = {
-  type: "achievement";
-  metadata: {
-    requirement: string;
-  };
-};
-export type UnlockGameLevel = {
-  type: "game_level";
-  metadata: {
-    game: string;
-    level: number;
-    additionalRequirement?: string;
-  };
-};
-export type UnlockBundlePurchase = {
-  type: "bundle_purchase";
-  metadata: {
-    bundleId: string;
-  };
-};
-export type UnlockGamePurchase = {
-  type: "game_purchase";
-  metadata: {
-    description: string;
-  };
-};
-export type UnlockSpecialEvent = {
-  type: "special_event";
-  metadata: {
-    game?: string;
-    description: string;
-  };
+export type Window = {
+  starts_at: string;
+  ends_at: string;
+  stock: number;
 };
